@@ -1,33 +1,31 @@
 const { Schema, model } = require("mongoose");
 const ObjectId = Schema.Types.ObjectId;
 
-const UserSchema = new Schema(
+const reviewSchema = new Schema(
   {
-    authId: {
+    user: {
       type: ObjectId,
       required: true,
-      ref: "Auth",
+    },
+    host: {
+      type: ObjectId,
+      required: true,
+    },
+    car: {
+      type: ObjectId,
+      required: true,
     },
     name: {
       type: String,
       required: true,
     },
-    email: {
-      type: String,
+    rating: {
+      type: Number,
       required: true,
     },
-    profile_image: {
-      type: String,
-    },
-    phone_number: {
+    description: {
       type: String,
       required: true,
-    },
-    date_of_birth: {
-      type: String,
-    },
-    address: {
-      type: String,
     },
   },
   {
@@ -35,6 +33,6 @@ const UserSchema = new Schema(
   }
 );
 
-const User = model("User", UserSchema);
+const Review = model("Review", reviewSchema);
 
-module.exports = User;
+module.exports = Review;
