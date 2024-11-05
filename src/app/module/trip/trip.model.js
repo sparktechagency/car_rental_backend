@@ -10,7 +10,12 @@ const tripSchema = new Schema(
     },
     host: {
       type: ObjectId,
-      ref: "Car",
+      ref: "Host",
+      required: true,
+    },
+    user: {
+      type: ObjectId,
+      ref: "User",
       required: true,
     },
     tripStartDate: {
@@ -37,7 +42,24 @@ const tripSchema = new Schema(
       type: Date,
       required: true,
     },
+    isPickupAtLocation: {
+      type: Boolean,
+    },
+    pickupLocation: {
+      type: String,
+    },
+    returnLocation: {
+      type: String,
+      required: true,
+    },
     tripPrice: {
+      type: Number,
+      required: true,
+    },
+    deliveryFee: {
+      type: Number,
+    },
+    maxTripDistance: {
       type: Number,
       required: true,
     },

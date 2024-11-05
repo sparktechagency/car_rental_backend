@@ -6,8 +6,9 @@ const carSchema = new Schema(
     host: {
       type: ObjectId,
       ref: "Host",
-      required: true,
     },
+
+    // car related
     carAddress: {
       type: String,
       required: true,
@@ -28,10 +29,31 @@ const carSchema = new Schema(
       type: Number,
       required: true,
     },
-    // odometer: {
-    //   type: String,
-    //   required: true,
-    // },
+    transmission: {
+      type: String,
+      enum: ["automatic", "manual"],
+      required: true,
+    },
+    isElectric: {
+      type: Boolean,
+    },
+    carType: {
+      type: String,
+      required: true,
+    },
+    vehicleType: {
+      type: String,
+      enum: ["car", "suv", "bus", "minivan", "truck", "van", "cargo-van"],
+      required: true,
+    },
+    maxTravelDistancePerDay: {
+      type: Number,
+      required: true,
+    },
+    finePerKm: {
+      type: Number,
+      required: true,
+    },
     features: {
       type: Array,
       required: true,
@@ -52,20 +74,16 @@ const carSchema = new Schema(
       type: String,
       required: true,
     },
-    carType: {
-      type: String,
-      required: true,
-    },
-    isElectric: {
-      type: Boolean,
-    },
     fuelType: {
       type: String,
       required: true,
     },
-    transmission: {
-      type: String,
-      enum: ["automatic", "manual"],
+    discountDays: {
+      type: Number,
+      required: true,
+    },
+    discountAmount: {
+      type: Number,
       required: true,
     },
     car_image: {
@@ -87,12 +105,31 @@ const carSchema = new Schema(
         required: true,
       },
     },
-    distanceIncluded: {
-      type: String,
-    },
-    ratings: {
+    avgRating: {
       type: Number,
       default: 0,
+    },
+
+    // host details
+    hostLicenseNumber: {
+      type: String,
+      required: true,
+    },
+    hostFirstName: {
+      type: String,
+      required: true,
+    },
+    hostLastName: {
+      type: String,
+      required: true,
+    },
+    hostLicenseExpiryDate: {
+      type: String, // yyyy-mm-dd
+      required: true,
+    },
+    hostLicenseDateOfBirth: {
+      type: String, // yyyy-mm-dd
+      required: true,
     },
   },
   { timestamps: true }
