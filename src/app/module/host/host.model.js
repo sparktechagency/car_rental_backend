@@ -23,9 +23,6 @@ const hostSchema = new Schema(
       type: String,
       required: true,
     },
-    date_of_birth: {
-      type: String,
-    },
     address: {
       type: String,
     },
@@ -45,7 +42,7 @@ const hostSchema = new Schema(
       type: String, // yyyy-mm-dd
       required: true,
     },
-    dateOfBirth: {
+    licenseDateOfBirth: {
       type: String, // yyyy-mm-dd
       required: true,
     },

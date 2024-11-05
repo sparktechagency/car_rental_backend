@@ -94,6 +94,10 @@ const carSchema = new Schema(
       type: Number,
       required: true,
     },
+    deliveryFee: {
+      type: Number,
+      required: true,
+    },
     location: {
       type: {
         type: String,
