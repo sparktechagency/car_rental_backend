@@ -1,6 +1,37 @@
 const { default: status } = require("http-status");
 
 // overview ========================
+const addDestination = async (req) => {
+  const { tripId } = query;
+
+  const trip = await Trip.findById(tripId).populate("car user").lean();
+
+  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+
+  return trip;
+};
+
+const getAllDestination = async (query) => {
+  const { tripId } = query;
+
+  const trip = await Trip.findById(tripId).populate("car user").lean();
+
+  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+
+  return trip;
+};
+
+const deleteDestination = async (query) => {
+  const { tripId } = query;
+
+  const trip = await Trip.findById(tripId).populate("car user").lean();
+
+  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+
+  return trip;
+};
+
+// overview ========================
 const revenue = async (query) => {
   const { year: strYear } = query;
   const year = Number(strYear);
@@ -102,6 +133,12 @@ const totalOverview = async () => {
   };
 };
 
-const DashboardService = { revenue, totalOverview };
+const DashboardService = {
+  addDestination,
+  getAllDestination,
+  deleteDestination,
+  revenue,
+  totalOverview,
+};
 
 module.exports = DashboardService;

@@ -29,6 +29,36 @@ const UserSchema = new Schema(
     address: {
       type: String,
     },
+
+    // bank info
+    accountHolderName: {
+      type: String,
+      required: true,
+    },
+    accountHolderType: {
+      type: String,
+      required: true,
+    },
+    accountNo: {
+      type: String,
+      required: true,
+    },
+    routingNo: {
+      type: String,
+      required: true,
+    },
+    // cardNum: {
+    //   type: Number,
+    //   required: true,
+    // },
+    // expirationDate: {
+    //   type: String,
+    //   required: true,
+    // },
+    // cvc: {
+    //   type: Number,
+    //   required: true,
+    // },
   },
   {
     timestamps: true,

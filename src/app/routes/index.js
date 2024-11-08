@@ -5,6 +5,8 @@ const AdminRoutes = require("../module/admin/admin.routes");
 const UserRoutes = require("../module/user/user.routes");
 const DashboardRoutes = require("../module/dashboard/dashboard.routes");
 const ManageRoutes = require("../module/manage/manage.routes");
+const CarRoutes = require("../module/car/car.routes");
+const TripRoutes = require("../module/trip/trip.routes");
 
 const moduleRoutes = [
   {
@@ -26,6 +28,14 @@ const moduleRoutes = [
   {
     path: "/manage",
     route: ManageRoutes,
+  },
+  {
+    path: "/car",
+    route: CarRoutes,
+  },
+  {
+    path: "/trip",
+    route: TripRoutes,
   },
 ];
 
