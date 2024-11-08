@@ -1,34 +1,72 @@
 const { default: status } = require("http-status");
+const Destination = require("../destination/destination.model");
+const ApiError = require("../../../error/ApiError");
+const QueryBuilder = require("../../../builder/queryBuilder");
 
-// overview ========================
+// destination ========================
 const addDestination = async (req) => {
-  const { tripId } = query;
+  const { files, body: data } = req;
+  const { name } = data || {};
 
-  const trip = await Trip.findById(tripId).populate("car user").lean();
+  if (!Object.keys(data).length)
+    throw new ApiError(
+      status.BAD_REQUEST,
+      "Data is missing in the request body!"
+    );
 
-  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+  if (!files || !files.destination_image)
+    throw new ApiError(status.BAD_REQUEST, "Destination Image is required");
 
-  return trip;
+  let destination_image;
+  if (files && files.destination_image)
+    destination_image = `/${files.destination_image[0].path}`;
+
+  const existingDestination = await Destination.findOne({ name }).collation({
+    locale: "en",
+    strength: 2,
+  });
+
+  if (existingDestination)
+    throw new ApiError(status.CONFLICT, `Destination ${name} exists`);
+
+  const destinationData = { name, destination_image };
+
+  const destination = await Destination.create(destinationData);
+
+  return destination;
 };
 
 const getAllDestination = async (query) => {
-  const { tripId } = query;
+  const destinationQuery = new QueryBuilder(Destination.find({}).lean(), query)
+    .search(["name"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-  const trip = await Trip.findById(tripId).populate("car user").lean();
+  const [destinations, meta] = await Promise.all([
+    destinationQuery.modelQuery,
+    destinationQuery.countTotal(),
+  ]);
 
-  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+  if (!destinations.length)
+    throw new ApiError(status.NOT_FOUND, "Destinations not found");
 
-  return trip;
+  return {
+    meta,
+    destinations,
+  };
 };
 
 const deleteDestination = async (query) => {
-  const { tripId } = query;
+  const { destinationId } = query;
 
-  const trip = await Trip.findById(tripId).populate("car user").lean();
+  const result = await Destination.deleteOne({ _id: destinationId });
 
-  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+  if (!result.deletedCount)
+    throw new ApiError(status.NOT_FOUND, "Destination not found");
 
-  return trip;
+  return result;
 };
 
 // overview ========================
