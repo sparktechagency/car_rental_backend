@@ -10,6 +10,8 @@ const uploadFile = () => {
         uploadPath = "uploads/images/profile";
       } else if (file.fieldname === "car_image") {
         uploadPath = "uploads/images/car";
+      } else if (file.fieldname === "destination_image") {
+        uploadPath = "uploads/images/destination";
       } else {
         uploadPath = "uploads";
       }
@@ -36,7 +38,11 @@ const uploadFile = () => {
   });
 
   const fileFilter = (req, file, cb) => {
-    const allowedFieldnames = ["profile_image", "car_image"];
+    const allowedFieldnames = [
+      "profile_image",
+      "car_image",
+      "destination_image",
+    ];
 
     if (file.fieldname === undefined) {
       // Allow requests without any files
@@ -63,6 +69,7 @@ const uploadFile = () => {
   }).fields([
     { name: "profile_image", maxCount: 1 },
     { name: "car_image", maxCount: 15 },
+    { name: "destination_image", maxCount: 1 },
   ]);
 
   return upload;

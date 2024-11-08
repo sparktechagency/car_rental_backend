@@ -1,4 +1,73 @@
 const { default: status } = require("http-status");
+const Destination = require("../destination/destination.model");
+const ApiError = require("../../../error/ApiError");
+const QueryBuilder = require("../../../builder/queryBuilder");
+
+// destination ========================
+const addDestination = async (req) => {
+  const { files, body: data } = req;
+  const { name } = data || {};
+
+  if (!Object.keys(data).length)
+    throw new ApiError(
+      status.BAD_REQUEST,
+      "Data is missing in the request body!"
+    );
+
+  if (!files || !files.destination_image)
+    throw new ApiError(status.BAD_REQUEST, "Destination Image is required");
+
+  let destination_image;
+  if (files && files.destination_image)
+    destination_image = `/${files.destination_image[0].path}`;
+
+  const existingDestination = await Destination.findOne({ name }).collation({
+    locale: "en",
+    strength: 2,
+  });
+
+  if (existingDestination)
+    throw new ApiError(status.CONFLICT, `Destination ${name} exists`);
+
+  const destinationData = { name, destination_image };
+
+  const destination = await Destination.create(destinationData);
+
+  return destination;
+};
+
+const getAllDestination = async (query) => {
+  const destinationQuery = new QueryBuilder(Destination.find({}).lean(), query)
+    .search(["name"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const [destinations, meta] = await Promise.all([
+    destinationQuery.modelQuery,
+    destinationQuery.countTotal(),
+  ]);
+
+  if (!destinations.length)
+    throw new ApiError(status.NOT_FOUND, "Destinations not found");
+
+  return {
+    meta,
+    destinations,
+  };
+};
+
+const deleteDestination = async (query) => {
+  const { destinationId } = query;
+
+  const result = await Destination.deleteOne({ _id: destinationId });
+
+  if (!result.deletedCount)
+    throw new ApiError(status.NOT_FOUND, "Destination not found");
+
+  return result;
+};
 
 // overview ========================
 const revenue = async (query) => {
@@ -102,6 +171,12 @@ const totalOverview = async () => {
   };
 };
 
-const DashboardService = { revenue, totalOverview };
+const DashboardService = {
+  addDestination,
+  getAllDestination,
+  deleteDestination,
+  revenue,
+  totalOverview,
+};
 
 module.exports = DashboardService;

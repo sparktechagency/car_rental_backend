@@ -19,11 +19,11 @@ const tripSchema = new Schema(
       required: true,
     },
     tripStartDate: {
-      type: String,
+      type: String, // MM/DD/YYYY
       required: true,
     },
     tripStartTime: {
-      type: String,
+      type: String, // HH:MM AM/PM
       required: true,
     },
     tripStartDateTime: {
@@ -31,11 +31,11 @@ const tripSchema = new Schema(
       required: true,
     },
     tripEndDate: {
-      type: String,
+      type: String, // MM/DD/YYYY
       required: true,
     },
     tripEndTime: {
-      type: String,
+      type: String, // HH:MM AM/PM
       required: true,
     },
     tripEndDateTime: {
@@ -56,12 +56,14 @@ const tripSchema = new Schema(
       type: Number,
       required: true,
     },
-    deliveryFee: {
-      type: Number,
-    },
     maxTripDistance: {
       type: Number,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ["requested", "canceled", "ongoing", "completed"],
+      default: "requested",
     },
   },
   { timestamps: true }

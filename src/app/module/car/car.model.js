@@ -10,7 +10,11 @@ const carSchema = new Schema(
 
     // car related
     carAddress: {
-      type: String,
+      type: String, // map address
+      required: true,
+    },
+    destination: {
+      type: String, // destination
       required: true,
     },
     licensePlateNum: {
@@ -39,6 +43,7 @@ const carSchema = new Schema(
     },
     carType: {
       type: String,
+      enum: ["luxury", "economy"],
       required: true,
     },
     vehicleType: {
@@ -138,6 +143,8 @@ const carSchema = new Schema(
   },
   { timestamps: true }
 );
+
+carSchema.index({ location: "2dsphere" });
 
 const Car = model("Car", carSchema);
 
