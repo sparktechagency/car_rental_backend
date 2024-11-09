@@ -4,6 +4,8 @@ const handleValidationError = require("../../error/handleValidationError");
 const handleCastError = require("../../error/handleCastError");
 const ApiError = require("../../error/ApiError");
 const { JsonWebTokenError, TokenExpiredError } = require("jsonwebtoken");
+const { MulterError } = require("multer");
+const handleMulterError = require("../../error/handleMulterError");
 
 const createErrorMessage = (message, path = "") => [{ path, message }];
 
@@ -67,6 +69,7 @@ const globalErrorHandler = (error, req, res, next) => {
       message: error.message,
       errorMessages: createErrorMessage(error.message),
     }),
+    MulterError: () => handleMulterError(error),
   };
 
   // Determine the specific error handler
@@ -77,7 +80,8 @@ const globalErrorHandler = (error, req, res, next) => {
     (error instanceof ApiError && errorHandlers.ApiError) ||
     (error.code === 11000 && errorHandlers.DuplicateKeyError) ||
     (error instanceof TypeError && errorHandlers.TypeError) ||
-    (error instanceof mongooseError && errorHandlers.mongooseError);
+    (error instanceof mongooseError && errorHandlers.mongooseError) ||
+    (error instanceof MulterError && errorHandlers.MulterError);
 
   if (errorType) {
     ({ statusCode, message, errorMessages } = errorType());

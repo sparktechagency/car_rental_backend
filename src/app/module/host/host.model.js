@@ -26,6 +26,7 @@ const hostSchema = new Schema(
     address: {
       type: String,
     },
+    
     licenseNumber: {
       type: String,
       required: true,

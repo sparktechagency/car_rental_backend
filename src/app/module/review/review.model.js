@@ -5,10 +5,7 @@ const reviewSchema = new Schema(
   {
     user: {
       type: ObjectId,
-      required: true,
-    },
-    host: {
-      type: ObjectId,
+      ref: "User",
       required: true,
     },
     car: {

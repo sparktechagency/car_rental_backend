@@ -8,11 +8,6 @@ const tripSchema = new Schema(
       ref: "Car",
       required: true,
     },
-    host: {
-      type: ObjectId,
-      ref: "Host",
-      required: true,
-    },
     user: {
       type: ObjectId,
       ref: "User",
