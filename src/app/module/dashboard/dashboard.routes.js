@@ -8,6 +8,18 @@ const router = express.Router();
 
 router
 
+  // car ========================
+  .get(
+    "/get-all-add-car-req",
+    auth(ENUM_USER_ROLE.ADMIN),
+    DashboardController.getAllAddCarReq
+  )
+  .patch(
+    "/approve-car",
+    auth(ENUM_USER_ROLE.ADMIN),
+    DashboardController.approveCar
+  )
+
   // destination ========================
   .post(
     "/add-destination",

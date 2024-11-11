@@ -121,7 +121,7 @@ const carSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "approved"],
+      enum: ["pending", "approved", "canceled"],
     },
 
     // host details

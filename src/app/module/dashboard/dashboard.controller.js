@@ -54,12 +54,35 @@ const revenue = catchAsync(async (req, res) => {
   });
 });
 
+// car ========================
+const getAllAddCarReq = catchAsync(async (req, res) => {
+  const result = await DashboardService.getAllAddCarReq(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Add car requests retrieved successfully",
+    data: result,
+  });
+});
+
+const approveCar = catchAsync(async (req, res) => {
+  const result = await DashboardService.approveCar(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car status updated successfully",
+    data: result,
+  });
+});
+
 const DashboardController = {
   addDestination,
   getAllDestination,
   deleteDestination,
   totalOverview,
   revenue,
+  getAllAddCarReq,
+  approveCar,
 };
 
 module.exports = DashboardController;
