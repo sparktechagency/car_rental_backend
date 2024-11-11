@@ -115,7 +115,7 @@ const carSchema = new Schema(
         required: true,
       },
     },
-    avgRating: {
+    rating: {
       type: Number,
       default: 0,
     },

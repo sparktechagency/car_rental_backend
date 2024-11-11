@@ -70,7 +70,7 @@ const UserSchema = new Schema(
       type: String,
       // required: true,
     },
-    avgRating: {
+    rating: {
       type: Number,
       default: 0,
     },

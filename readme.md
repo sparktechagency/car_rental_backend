@@ -27,7 +27,7 @@ above is my data model of car and trip. I want to build an advance search, filte
 fromDate & fromTime will be converted to tripStartDateTime (2024-10-31T09:44:33.436+00:00) time format when saving to mongodb
 toDate & toTime will be converted to tripEndDateTime (2024-10-31T09:44:33.436+00:00) time format when saving to mongodb
 
-pricePerDay will be min and max value. 
+pricePerDay will be withing minPrice and maxPrice.
 seats will be greater than or equal.
 
 I want to search in the trip collection if a car has a trip within the tripStartDateTime, tripEndDateTime time range. exclude all of these cars. and show the remaining cars from the car collection. 
