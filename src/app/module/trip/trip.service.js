@@ -33,7 +33,6 @@ const addTrip = async (userData, payload) => {
 
   const requiredFields = [
     "carId",
-    "hostId",
     "tripStartDate",
     "tripStartTime",
     "tripEndDate",
@@ -54,7 +53,6 @@ const addTrip = async (userData, payload) => {
   const tripEndDateTime = new Date(`${tripEndDate} ${tripEndTime}`);
   const tripData = {
     car: carId,
-    host: hostId,
     user: userId,
     tripStartDate,
     tripStartTime,
@@ -68,7 +66,6 @@ const addTrip = async (userData, payload) => {
     tripPrice,
     maxTripDistance,
   };
-  console.log(tripData);
 
   const tripExists = await Trip.findOne({
     user: userId,
@@ -99,15 +96,7 @@ const addTrip = async (userData, payload) => {
 const getMyTripOrder = async (userData) => {
   const { userId, role } = userData;
 
-  let trips = [];
-  switch (role) {
-    case ENUM_USER_ROLE.USER:
-      trips = await Trip.find({ user: userId }).populate("car user").lean();
-      break;
-    case ENUM_USER_ROLE.HOST:
-      trips = await Trip.find({ host: userId }).populate("car user").lean();
-      break;
-  }
+  const trips = await Trip.find({ user: userId }).populate("car user").lean();
 
   if (!trips.length) throw new ApiError(status.NOT_FOUND, "No trips found");
 
@@ -132,7 +121,6 @@ const getAllTrip = async (query) => {
     Trip.find().populate("user car").lean(),
     query
   )
-    // .search(["status", "tripPrice"])
     .search(["status", "returnLocation", "pickupLocation"])
     .filter()
     .sort()

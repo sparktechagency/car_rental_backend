@@ -12,9 +12,6 @@ const dateTimeValidator = (inputDate, inputTime) => {
     throw new ApiError(status.BAD_REQUEST, "Date format must be MM/DD/YYYY");
   if (!timeChecker)
     throw new ApiError(status.BAD_REQUEST, "Time format must be HH:MM AM/PM");
-
-  const day = new Date(inputDate).toLocaleString("en-us", { weekday: "short" });
-  return day;
 };
 
 module.exports = dateTimeValidator;

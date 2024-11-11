@@ -2,8 +2,88 @@ const sendResponse = require("../../../shared/sendResponse");
 const { CarService } = require("./car.service");
 const catchAsync = require("../../../shared/catchasync");
 
-const addAndUpdateCar = catchAsync(async (req, res) => {
-  const result = await CarService.addAndUpdateCar(req.user, req.body);
+const addLocation = catchAsync(async (req, res) => {
+  const result = await CarService.addLocation(req.user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "New Car Added successfully",
+    data: result,
+  });
+});
+
+const updateCarLicense = catchAsync(async (req, res) => {
+  const result = await CarService.updateCarLicense(req.user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car updated successfully",
+    data: result,
+  });
+});
+
+const updateMakeModelYear = catchAsync(async (req, res) => {
+  const result = await CarService.updateMakeModelYear(req.user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car updated successfully",
+    data: result,
+  });
+});
+
+const updateTransmission = catchAsync(async (req, res) => {
+  const result = await CarService.updateTransmission(req.user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car updated successfully",
+    data: result,
+  });
+});
+
+const updateHostLicense = catchAsync(async (req, res) => {
+  const result = await CarService.updateHostLicense(req.user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car updated successfully",
+    data: result,
+  });
+});
+
+const updateDetails = catchAsync(async (req, res) => {
+  const result = await CarService.updateDetails(req.user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car updated successfully",
+    data: result,
+  });
+});
+
+const updatePhotos = catchAsync(async (req, res) => {
+  const result = await CarService.updatePhotos(req);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car updated successfully",
+    data: result,
+  });
+});
+
+const sendAddCarReq = catchAsync(async (req, res) => {
+  const result = await CarService.sendAddCarReq(req.user, req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car request sent successfully",
+    data: result,
+  });
+});
+
+const updateAllCarData = catchAsync(async (req, res) => {
+  const result = await CarService.updateAllCarData(req.user, req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -53,7 +133,15 @@ const deleteCar = catchAsync(async (req, res) => {
 });
 
 const CarController = {
-  addAndUpdateCar,
+  addLocation,
+  updateCarLicense,
+  updateMakeModelYear,
+  updateTransmission,
+  updateHostLicense,
+  updateDetails,
+  updatePhotos,
+  sendAddCarReq,
+  updateAllCarData,
   getSingleCar,
   getMyCar,
   getAllCar,

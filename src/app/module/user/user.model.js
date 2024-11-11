@@ -16,36 +16,63 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      enum: ["USER", "HOST"],
+      default: "USER",
+      required: true,
+    },
     profile_image: {
       type: String,
     },
     phone_number: {
       type: String,
-      required: true,
-    },
-    date_of_birth: {
-      type: String,
+      // required: true,
     },
     address: {
       type: String,
     },
+    licenseNumber: {
+      type: String,
+      // required: true,
+    },
+    firstName: {
+      type: String,
+      // required: true,
+    },
+    lastName: {
+      type: String,
+      // required: true,
+    },
+    licenseExpiryDate: {
+      type: String, // yyyy-mm-dd
+      // required: true,
+    },
+    licenseDateOfBirth: {
+      type: String, // yyyy-mm-dd
+      // required: true,
+    },
 
-    // bank info
+    // for host
     accountHolderName: {
       type: String,
-      required: true,
+      // required: true,
     },
     accountHolderType: {
       type: String,
-      required: true,
+      // required: true,
     },
     accountNo: {
       type: String,
-      required: true,
+      // required: true,
     },
     routingNo: {
       type: String,
-      required: true,
+      // required: true,
+    },
+    avgRating: {
+      type: Number,
+      default: 0,
     },
     // cardNum: {
     //   type: Number,
