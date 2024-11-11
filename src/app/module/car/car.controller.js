@@ -82,6 +82,16 @@ const sendAddCarReq = catchAsync(async (req, res) => {
   });
 });
 
+const updateAllCarData = catchAsync(async (req, res) => {
+  const result = await CarService.updateAllCarData(req.user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Car updated successfully",
+    data: result,
+  });
+});
+
 const getSingleCar = catchAsync(async (req, res) => {
   const result = await CarService.getSingleCar(req.query);
   sendResponse(res, {
@@ -131,6 +141,7 @@ const CarController = {
   updateDetails,
   updatePhotos,
   sendAddCarReq,
+  updateAllCarData,
   getSingleCar,
   getMyCar,
   getAllCar,

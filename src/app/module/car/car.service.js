@@ -371,6 +371,21 @@ const sendAddCarReq = async (userData, query) => {
   return updatedCar;
 };
 
+const updateAllCarData = async (userData, payload) => {
+  const { carId } = payload;
+
+  validateFields(payload, ["carId"]);
+
+  const updatedCar = await updateCarAndNotify(
+    carId,
+    payload,
+    userData.userId,
+    "You have updated your car's information"
+  );
+
+  return updatedCar;
+};
+
 const getSingleCar = async (query) => {
   const { carId } = query;
 
@@ -530,6 +545,7 @@ const CarService = {
   updatePhotos,
   updateHostPaymentDetails,
   sendAddCarReq,
+  updateAllCarData,
   getSingleCar,
   getMyCar,
   getAllCar,

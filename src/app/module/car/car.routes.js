@@ -53,6 +53,11 @@ router
     auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.USER),
     CarController.sendAddCarReq
   )
+  .patch(
+    "/update-all-car-data",
+    auth(ENUM_USER_ROLE.HOST),
+    CarController.updateAllCarData
+  )
   .get(
     "/get-single-car",
     auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
