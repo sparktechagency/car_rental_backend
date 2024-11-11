@@ -9,6 +9,7 @@ const CarRoutes = require("../module/car/car.routes");
 const TripRoutes = require("../module/trip/trip.routes");
 const FeedbackRoutes = require("../module/feedback/feedback.routes");
 const ReviewRoutes = require("../module/review/review.routes");
+const FavoriteRoutes = require("../module/favorite/favorite.routes");
 
 const moduleRoutes = [
   {
@@ -46,6 +47,10 @@ const moduleRoutes = [
   {
     path: "/review",
     route: ReviewRoutes,
+  },
+  {
+    path: "/favorite",
+    route: FavoriteRoutes,
   },
 ];
 
