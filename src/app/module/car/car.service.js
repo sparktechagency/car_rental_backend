@@ -9,6 +9,7 @@ const { default: axios } = require("axios");
 const config = require("../../../config");
 const validateFields = require("../../../util/validateFields");
 const { ENUM_CAR_STATUS } = require("../../../util/enum");
+const { updateCarAndNotify } = require("../../../util/updateCarAndNotify");
 
 // const addAndUpdateCar = async (req) => {
 //   const { files, body: data } = req;
@@ -60,26 +61,6 @@ const { ENUM_CAR_STATUS } = require("../../../util/enum");
 
 //   return user;
 // };
-
-const updateCarAndNotify = async (
-  carId,
-  updateData,
-  userId,
-  message,
-  title = null
-) => {
-  const updatedCar = await Car.findByIdAndUpdate(
-    carId,
-    { $set: updateData },
-    { new: true, runValidators: true }
-  ).lean();
-
-  if (!updatedCar) throw new ApiError(status.NOT_FOUND, "Car not found");
-
-  postNotification(title ? title : "Car Data Updated", message, userId);
-
-  return updatedCar;
-};
 
 const addLocation = async (userData, payload) => {
   const { userId } = userData;
@@ -389,7 +370,7 @@ const updateAllCarData = async (userData, payload) => {
 const getSingleCar = async (query) => {
   const { carId } = query;
 
-  const car = await Car.findById(carId).lean();
+  const car = await Car.findById(carId).populate("user").lean();
 
   if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
 

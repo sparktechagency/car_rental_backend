@@ -14,6 +14,7 @@ const ENUM_TRIP_STATUS = {
 const ENUM_CAR_STATUS = {
   PENDING: "pending",
   APPROVED: "approved",
+  CANCELED: "canceled",
 };
 
 module.exports = {

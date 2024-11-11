@@ -59,7 +59,7 @@ router
     CarController.updateAllCarData
   )
   .get(
-    "/get-single-car",
+    "/get-single-car-details",
     auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
     CarController.getSingleCar
   )
