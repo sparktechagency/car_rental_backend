@@ -10,58 +10,10 @@ const config = require("../../../config");
 const validateFields = require("../../../util/validateFields");
 const { ENUM_CAR_STATUS } = require("../../../util/enum");
 const { updateCarAndNotify } = require("../../../util/updateCarAndNotify");
+const { isValidDate } = require("../../../util/isValidDate");
+const dateTimeValidator = require("../../../util/dateTimeValidator");
 
-// const addAndUpdateCar = async (req) => {
-//   const { files, body: data } = req;
-//   const { userId, authId } = req.user;
-//   const { location } = data;
-//   const carData = {
-//     user: userId,
-//     carAddress: carAddress || null,
-//     location: {
-//       coordinates: [Number(longitude), Number(latitude)],
-//     },
-//     destination: destination || null,
-//     licensePlateNum: licensePlateNum || null,
-//     make: make || null,
-//     model: model || null,
-//     year: year || null,
-//     transmission: "" || null,
-//     isElectric: "" || null,
-//     carType: "" || null,
-//     vehicleType: "" || null,
-//     maxTravelDistancePerDay: "" || null,
-//     finePerKm: "" || null,
-//     features: "" || null,
-//     description: "" || null,
-//     seats: "" || null,
-//     bags: "" || null,
-//     doors: "" || null,
-//     fuelType: "" || null,
-//     discountDays: "" || null,
-//     discountAmount: "" || null,
-//     car_image: "" || [],
-//     pricePerDay: "" || null,
-//     deliveryFee: "" || null,
-//     location: "" || null,
-//     hostLicenseNumber: "" || null,
-//     hostFirstName: "" || null,
-//     hostLastName: "" || null,
-//     hostLicenseExpiryDate: "" || null,
-//     hostLicenseDateOfBirth: "" || null,
-//   };
-
-//   if (!longitude || !latitude)
-//     throw new ApiError(
-//       status.BAD_REQUEST,
-//       "longitude and latitude is required"
-//     );
-
-//   if (!user) throw new ApiError(status.NOT_FOUND, "User not found!");
-
-//   return user;
-// };
-
+// update car ===========================
 const addLocation = async (userData, payload) => {
   const { userId } = userData;
   const { carAddress, longitude, latitude, destination } = payload;
@@ -290,6 +242,21 @@ const updateHostPaymentDetails = async (userData, payload) => {
   const { userId } = userData;
 };
 
+const updateAllCarData = async (userData, payload) => {
+  const { carId } = payload;
+
+  validateFields(payload, ["carId"]);
+
+  const updatedCar = await updateCarAndNotify(
+    carId,
+    payload,
+    userData.userId,
+    "You have updated your car's information"
+  );
+
+  return updatedCar;
+};
+
 const sendAddCarReq = async (userData, query) => {
   const { userId, role } = userData;
   const { carId } = query;
@@ -352,23 +319,10 @@ const sendAddCarReq = async (userData, query) => {
   return updatedCar;
 };
 
-const updateAllCarData = async (userData, payload) => {
-  const { carId } = payload;
-
-  validateFields(payload, ["carId"]);
-
-  const updatedCar = await updateCarAndNotify(
-    carId,
-    payload,
-    userData.userId,
-    "You have updated your car's information"
-  );
-
-  return updatedCar;
-};
-
 const getSingleCar = async (query) => {
   const { carId } = query;
+
+  validateFields(query, ["carId"]);
 
   const car = await Car.findById(carId).populate("user").lean();
 
@@ -387,6 +341,7 @@ const getMyCar = async (userData) => {
   return cars;
 };
 
+// main search ===========================
 const getAllCar = async (query) => {
   const {
     latitude,
@@ -403,26 +358,16 @@ const getAllCar = async (query) => {
     model,
     seats,
     isElectric,
-  } = query;
+  } = query || {};
+
+  validateFields(query, ["fromDate", "fromTime", "toDate", "toTime"]);
+
+  dateTimeValidator(fromDate, fromTime);
+  dateTimeValidator(toDate, toTime);
 
   const tripStartDateTime = new Date(`${fromDate} ${fromTime}`);
   const tripEndDateTime = new Date(`${toDate} ${toTime}`);
-  console.log(tripStartDateTime, typeof tripStartDateTime);
-
-  const test = await Auth.find({
-    createdAt: "2024-10-31T09:44:33.436+00:00",
-  });
-  // const test = await Trip.find({
-  //   tripStartDateTime: "2024-10-01T04:30:00.000Z",
-  // });
-  // const test = await Trip.find({
-  //   tripStartTime: "08:00 AM",
-  // });
-
-  console.log(test);
-  // const test = await Trip.findOne({});
-  // const
-  // console.log(test.tripStartDateTime.getTime() === tripStartDateTime.getTime());
+  isValidDate([tripStartDateTime, tripEndDateTime]);
 
   const unavailableCars = await Trip.find({
     $or: [
@@ -438,12 +383,12 @@ const getAllCar = async (query) => {
       },
     ],
   }).select("car");
-  console.log(unavailableCars);
+
   const unavailableCarIds = unavailableCars.map((trip) => trip.car);
 
-  // Step 3: Query `Car` collection with filters, excluding unavailable cars
   const searchFilters = {
-    _id: { $nin: unavailableCarIds }, // Exclude unavailable cars
+    _id: { $nin: unavailableCarIds },
+    // status: { $eq: ENUM_CAR_STATUS.APPROVED },
   };
 
   if (maxPrice) searchFilters.pricePerDay = { $gte: minPrice, $lte: maxPrice };
@@ -466,38 +411,10 @@ const getAllCar = async (query) => {
     };
   }
 
-  const availableCars = await Car.find(searchFilters)
-    .collation({
-      locale: "en",
-      strength: 2,
-    })
-    //   .select("seats");
-    .select("pricePerDay");
-
-  // const availableCars = await Car.find({
-  //   _id: { $nin: unavailableCarIds }, // Exclude unavailable cars
-  //   ...(maxPrice && { pricePerDay: { $gte: minPrice, $lte: maxPrice } }),
-  //   ...(vehicleType && { vehicleType }),
-  //   ...(make && { make }),
-  //   ...(year && { year }),
-  //   ...(model && { model }),
-  //   ...(seats && { seats: { $gte: seats } }),
-  //   ...(isElectric && { isElectric }),
-  //   ...(latitude &&
-  //     longitude && {
-  //       location: {
-  //         $nearSphere: {
-  //           $geometry: {
-  //             type: "Point",
-  //             coordinates: [longitude, latitude],
-  //           },
-  //           // $maxDistance: 5000000,
-  //         },
-  //       },
-  //     }),
-  // }).collation({ locale: "en", strength: 2 });
-  //   .select("seats");
-  //   .select("pricePerDay");
+  const availableCars = await Car.find(searchFilters).collation({
+    locale: "en",
+    strength: 2,
+  });
 
   return {
     count: availableCars.length,
@@ -507,6 +424,8 @@ const getAllCar = async (query) => {
 
 const deleteCar = async (query) => {
   const { carId } = query;
+
+  validateFields(query, ["carId"]);
 
   const result = await Car.deleteOne(carId);
 

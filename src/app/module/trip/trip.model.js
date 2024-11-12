@@ -13,6 +13,11 @@ const tripSchema = new Schema(
       ref: "User",
       required: true,
     },
+    host: {
+      type: ObjectId,
+      ref: "User",
+      required: true,
+    },
     tripStartDate: {
       type: String, // MM/DD/YYYY
       required: true,

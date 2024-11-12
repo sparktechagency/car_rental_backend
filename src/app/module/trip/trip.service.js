@@ -6,6 +6,9 @@ const { ENUM_USER_ROLE, ENUM_TRIP_STATUS } = require("../../../util/enum");
 const QueryBuilder = require("../../../builder/queryBuilder");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
 const postNotification = require("../../../util/postNotification");
+const validateFields = require("../../../util/validateFields");
+const { isValidDate } = require("../../../util/isValidDate");
+const User = require("../user/user.model");
 
 const addTrip = async (userData, payload) => {
   const { userId } = userData;
@@ -31,8 +34,9 @@ const addTrip = async (userData, payload) => {
       "You can only select pick up location or pickup at car location"
     );
 
-  const requiredFields = [
+  validateFields(payload, [
     "carId",
+    "hostId",
     "tripStartDate",
     "tripStartTime",
     "tripEndDate",
@@ -40,20 +44,20 @@ const addTrip = async (userData, payload) => {
     "returnLocation",
     "tripPrice",
     "maxTripDistance",
-  ];
-
-  for (const f of requiredFields) {
-    if (!payload[f]) throw new ApiError(status.BAD_REQUEST, `Missing ${f}`);
-  }
+  ]);
 
   dateTimeValidator(tripStartDate, tripStartTime);
   dateTimeValidator(tripEndDate, tripEndTime);
 
   const tripStartDateTime = new Date(`${tripStartDate} ${tripStartTime}`);
   const tripEndDateTime = new Date(`${tripEndDate} ${tripEndTime}`);
+
+  isValidDate([tripStartDateTime, tripEndDateTime]);
+
   const tripData = {
     car: carId,
     user: userId,
+    host: hostId,
     tripStartDate,
     tripStartTime,
     tripStartDateTime,
@@ -93,10 +97,13 @@ const addTrip = async (userData, payload) => {
   return result;
 };
 
-const getMyTripOrder = async (userData) => {
-  const { userId, role } = userData;
+const getMyTripOrder = async (userData, query) => {
+  const { userId } = userData;
+  const { status: tripStatus = ENUM_TRIP_STATUS.REQUESTED } = query || {};
 
-  const trips = await Trip.find({ user: userId }).populate("car user").lean();
+  const trips = await Trip.find({ user: userId, status: tripStatus })
+    .populate("car user")
+    .lean();
 
   if (!trips.length) throw new ApiError(status.NOT_FOUND, "No trips found");
 
@@ -148,22 +155,13 @@ const updateTripStatus = async (payload) => {
     ENUM_TRIP_STATUS.COMPLETED,
   ];
 
-  if (!tripId || !tripStatus)
-    throw new ApiError(status.BAD_REQUEST, "Missing tripId or status");
+  validateFields(payload, ["tripId", "status"]);
 
   if (!allowedStatus.includes(tripStatus))
     throw new ApiError(
       status.BAD_REQUEST,
       "Allowed status: 'canceled', 'ongoing', 'completed'"
     );
-
-  const updatedTrip = await Trip.findByIdAndUpdate(
-    tripId,
-    { status: tripStatus },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedTrip) throw new ApiError(status.NOT_FOUND, "Trip not found");
 
   let title = "";
   let message = "";
@@ -176,6 +174,36 @@ const updateTripStatus = async (payload) => {
       title = "Trip Completed";
       message = `Trip ${tripId} is completed. Pay the host`;
       break;
+  }
+
+  const updatedTrip = await Trip.findByIdAndUpdate(
+    tripId,
+    { status: tripStatus },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedTrip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+
+  if (tripStatus === ENUM_TRIP_STATUS.COMPLETED) {
+    const { user: userId, host: hostId } = updatedTrip;
+
+    await User.updateOne(
+      { _id: hostId },
+      {
+        $inc: { trip: 1 },
+      }
+    );
+
+    postNotification(
+      "Trip Completed",
+      "You have completed the trip. Admin will transfer your payment shortly",
+      hostId
+    );
+    postNotification(
+      "Trip Completed",
+      "You have completed the trip. Leave a review",
+      userId
+    );
   }
 
   postNotification(title, message);

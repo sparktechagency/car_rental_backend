@@ -8,7 +8,7 @@ const router = express.Router();
 
 router
 
-  // car ========================
+  // car ===============================
   .get(
     "/get-all-add-car-req",
     auth(ENUM_USER_ROLE.ADMIN),

@@ -74,6 +74,9 @@ const UserSchema = new Schema(
       type: Number,
       default: 0,
     },
+    trip: {
+      type: Number,
+    },
     // cardNum: {
     //   type: Number,
     //   required: true,
