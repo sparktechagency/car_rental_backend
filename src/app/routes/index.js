@@ -10,6 +10,7 @@ const TripRoutes = require("../module/trip/trip.routes");
 const FeedbackRoutes = require("../module/feedback/feedback.routes");
 const ReviewRoutes = require("../module/review/review.routes");
 const FavoriteRoutes = require("../module/favorite/favorite.routes");
+const PaymentRoutes = require("../module/payment/payment.routes");
 
 const moduleRoutes = [
   {
@@ -51,6 +52,10 @@ const moduleRoutes = [
   {
     path: "/favorite",
     route: FavoriteRoutes,
+  },
+  {
+    path: "/payment",
+    route: PaymentRoutes,
   },
 ];
 

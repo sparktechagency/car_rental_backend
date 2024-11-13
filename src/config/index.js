@@ -48,7 +48,7 @@ const config = {
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
   },
   dvla: {
-    x_api_key: process.env.DVLA_X_API_KEY,
+    x_api_key: process.env.DVLA_X_API_KEY,  
   },
 };
 
