@@ -180,9 +180,7 @@ const totalOverview = async () => {
 // car ========================
 const getAllAddCarReq = async (query) => {
   const addCarReqQuery = new QueryBuilder(
-    Car.find({ status: { $eq: ENUM_CAR_STATUS.PENDING } })
-      .populate("user")
-      .lean(),
+    Car.find({ status: { $eq: ENUM_CAR_STATUS.PENDING } }).lean(),
     query
   )
     .search(["make model year licensePlateNum"])

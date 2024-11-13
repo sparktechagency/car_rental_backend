@@ -1,7 +1,11 @@
-# Laundry Server
+# Car-Rental
 
-    longitude: 0,                   // dynamic value
-    latitude: 0,                    // dynamic value
+### To do
+
+1. Include max distance on car search
+2. Include approved car on car search
+3. how much surcharge?
+4. what about deposit and refund?
 
 #
 
@@ -23,17 +27,15 @@ above is my data model of car and trip. I want to build an advance search, filte
     seats: 6,
     isElectric: true,
 
-
 fromDate & fromTime will be converted to tripStartDateTime (2024-10-31T09:44:33.436+00:00) time format when saving to mongodb
 toDate & toTime will be converted to tripEndDateTime (2024-10-31T09:44:33.436+00:00) time format when saving to mongodb
 
 pricePerDay will be withing minPrice and maxPrice.
 seats will be greater than or equal.
 
-I want to search in the trip collection if a car has a trip within the tripStartDateTime, tripEndDateTime time range. exclude all of these cars. and show the remaining cars from the car collection. 
+I want to search in the trip collection if a car has a trip within the tripStartDateTime, tripEndDateTime time range. exclude all of these cars. and show the remaining cars from the car collection.
 
-build me the logic. make it developer friendly 
-
+build me the logic. make it developer friendly
 
 # Cities
 

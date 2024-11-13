@@ -1,0 +1,14 @@
+const express = require("express");
+const auth = require("../../middleware/auth");
+const { ENUM_USER_ROLE } = require("../../../util/enum");
+const { PaymentController } = require("./payment.controller");
+
+const router = express.Router();
+
+router.post(
+  "/checkout",
+//   auth(ENUM_USER_ROLE.USER),
+  PaymentController.createCheckout
+);
+
+module.exports = router;

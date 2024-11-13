@@ -13,7 +13,7 @@ const addTrip = catchAsync(async (req, res) => {
 });
 
 const getMyTripOrder = catchAsync(async (req, res) => {
-  const result = await TripService.getMyTripOrder(req.user);
+  const result = await TripService.getMyTripOrder(req.user, req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,

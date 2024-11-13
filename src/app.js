@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const globalErrorHandler = require("./app/middleware/globalErrorHandler");
 const routes = require("./app/routes");
@@ -21,6 +22,12 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/uploads", express.static("uploads"));
+
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+app.get("/pay", (req, res) => {
+  res.render("./index.ejs");
+});
 
 app.use("/", routes);
 
