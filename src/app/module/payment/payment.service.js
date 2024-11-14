@@ -6,11 +6,14 @@ const config = require("../../../config");
 
 const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
+const endPointSecret = config.stripe.stripe_webhook_secret;
+
 const createCheckout = async (userData, payload) => {
   const session = await stripe.checkout.sessions.create({
+    // payment_method_types: ["card"],
+    mode: "payment",
     success_url: `http://${config.base_url}:${config.port}/payment/success`,
-    // success_url: `http://localhost:3000/success`,
-    cancel_url: "http://example.com/payment/cancel",
+    cancel_url: `http://${config.base_url}:${config.port}/payment/cancel`,
     line_items: [
       {
         price_data: {
@@ -23,10 +26,45 @@ const createCheckout = async (userData, payload) => {
         quantity: 1,
       },
     ],
-    mode: "payment",
   });
 
+  // console.log(session);
+
   return session;
+};
+
+const webhookManager = async (request) => {
+  console.log("hit");
+  const sig = request.headers["stripe-signature"];
+
+  let event;
+
+  event = stripe.webhooks.constructEvent(
+    request.body,
+    sig,
+    "whsec_41c71273d0be8064482c15a2abf32a7e71fdfe3a26822a56670657af08b96ec8"
+  );
+
+  // Handle the event
+  switch (event.type) {
+    case "checkout.session.completed":
+      const checkoutSessionCompleted = event.data.object;
+      console.log(checkoutSessionCompleted);
+      // Then define and call a function to handle the event checkout.session.completed
+      break;
+    case "payment_intent.succeeded":
+      const paymentIntentSucceeded = event.data.object;
+      console.log(paymentIntentSucceeded);
+      // Then define and call a function to handle the event payment_intent.succeeded
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  console.log(event);
+
+  return event;
 };
 
 const getAllFeedback = async (query) => {
@@ -52,6 +90,7 @@ const getAllFeedback = async (query) => {
 };
 
 const PaymentService = {
+  webhookManager,
   createCheckout,
   getAllFeedback,
 };
