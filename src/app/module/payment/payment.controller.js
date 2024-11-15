@@ -14,9 +14,19 @@ const cancelPage = catchAsync(async (req, res) => {
   res.render("cancel.ejs");
 });
 
+// const createCheckout = catchAsync(async (req, res) => {
+//   const result = await PaymentService.createCheckout(req.user, req.body);
+//   res.redirect(result.url);
+// });
+
 const createCheckout = catchAsync(async (req, res) => {
   const result = await PaymentService.createCheckout(req.user, req.body);
-  res.redirect(result.url);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Feedback retrieved",
+    data: result,
+  });
 });
 
 const webhookManager = catchAsync(async (req, res) => {

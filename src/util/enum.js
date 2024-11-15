@@ -17,8 +17,15 @@ const ENUM_CAR_STATUS = {
   CANCELED: "canceled",
 };
 
+const ENUM_PAYMENT_STATUS = {
+  UNPAID: "unpaid",
+  SUCCEEDED: "succeeded",
+  REFUNDED: "refunded",
+};
+
 module.exports = {
   ENUM_USER_ROLE,
   ENUM_TRIP_STATUS,
   ENUM_CAR_STATUS,
+  ENUM_PAYMENT_STATUS,
 };

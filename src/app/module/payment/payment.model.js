@@ -22,13 +22,18 @@ const paymentSchema = new Schema(
       type: Number,
       required: true,
     },
-    transactionId: {
+    checkout_session_id: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    payment_intent_id: {
       type: String,
     },
     status: {
       type: String,
-      enum: ["success", "refunded"],
-      default: "requested",
+      enum: ["unpaid", "succeeded", "refunded"],
+      default: "unpaid",
     },
   },
   {
