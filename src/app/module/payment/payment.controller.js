@@ -24,7 +24,7 @@ const createCheckout = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Feedback retrieved",
+    message: "Checkout Successful",
     data: result,
   });
 });
@@ -34,12 +34,34 @@ const webhookManager = catchAsync(async (req, res) => {
   res.send();
 });
 
+const getAllPayment = catchAsync(async (req, res) => {
+  const result = await PaymentService.getAllPayment(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Payment retrieval Successful",
+    data: result,
+  });
+});
+
+const refundPayment = catchAsync(async (req, res) => {
+  const result = await PaymentService.refundPayment(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Payment retrieval Successful",
+    data: result,
+  });
+});
+
 const PaymentController = {
   payPage,
   successPage,
   cancelPage,
   createCheckout,
   webhookManager,
+  getAllPayment,
+  refundPayment,
 };
 
 module.exports = { PaymentController };

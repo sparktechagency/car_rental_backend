@@ -105,26 +105,42 @@ const webhookManager = async (request) => {
   }
 };
 
-const getAllFeedback = async (query) => {
-  const feedbackQuery = new QueryBuilder(Feedback.find({}), query)
-    .search([])
+const getAllPayment = async (query) => {
+  const paymentQuery = new QueryBuilder(
+    Payment.find({}).populate("user host car"),
+    query
+  )
+    .search(["checkout_session_id", "payment_intent_id"])
     .filter()
     .sort()
     .paginate()
     .fields();
 
   const [result, meta] = await Promise.all([
-    feedbackQuery.modelQuery,
-    feedbackQuery.countTotal(),
+    paymentQuery.modelQuery,
+    paymentQuery.countTotal(),
   ]);
 
-  if (!result.length)
-    throw new ApiError(status.NOT_FOUND, "Feedback not found");
+  if (!result.length) throw new ApiError(status.NOT_FOUND, "Payment not found");
 
   return {
     meta,
     result,
   };
+};
+
+const refundPayment = async (payload) => {
+  const { payment_intent_id, amount } = payload;
+  console.log(payload);
+  validateFields(payload, ["payment_intent_id", "amount"]);
+
+  const refund = await stripe.refunds.create({
+    payment_intent: payment_intent_id,
+    amount: Number(amount) * 100,
+  });
+
+  // const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent_id);
+  // console.log(paymentIntent);
 };
 
 const updatePaymentToDB = async (sessionAndIntentId) => {
@@ -154,7 +170,8 @@ cron.schedule(
 const PaymentService = {
   webhookManager,
   createCheckout,
-  getAllFeedback,
+  getAllPayment,
+  refundPayment,
 };
 
 module.exports = { PaymentService };
