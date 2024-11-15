@@ -23,54 +23,51 @@ app.use(
 
 // ===============
 
-// app.post(
-//   "/webhook",
-//   express.raw({ type: "application/json" }),
-//   async (req, res) => {
-//     const webhookManager = await PaymentService.webhookManager(req);
-//     console.log(webhookManager);
-//   }
-// );
-
 app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  (request, response) => {
+  async (request, response) => {
     const sig = request.headers["stripe-signature"];
+    console.log("webhook hit");
 
     let event;
     try {
-      console.log("hit try");
+      console.log("try hit");
       event = stripe.webhooks.constructEvent(
         request.body,
         sig,
         "whsec_41c71273d0be8064482c15a2abf32a7e71fdfe3a26822a56670657af08b96ec8"
       );
-      console.log(event.data.object);
+      // console.log(event.data.object);
     } catch (err) {
-      console.log("hit catch");
-      console.log(err);
+      console.log("catch hit");
+      // console.log(err);
       response.status(400).send(`Webhook Error: ${err.message}`);
       return;
     }
 
     let checkoutSessionCompleted;
     let paymentIntentSucceeded;
-    // Handle the event
+
     switch (event.type) {
       case "checkout.session.completed":
         checkoutSessionCompleted = event.data.object;
-        // Then define and call a function to handle the event checkout.session.completed
+        console.log("checkoutSessionCompleted");
+        // fn
         break;
       case "payment_intent.succeeded":
         paymentIntentSucceeded = event.data.object;
-        // Then define and call a function to handle the event payment_intent.succeeded
+        console.log("paymentIntentSucceeded");
+        // fn
         break;
       // ... handle other event types
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.log(`Unhandled event type`);
+      // console.log(`Unhandled event type ${event.type}`);
     }
 
+    // const event = await PaymentService.webhookManager(request);
+    // console.log(event);
     // Return a 200 response to acknowledge receipt of the event
     response.send();
   }

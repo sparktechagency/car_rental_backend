@@ -7,10 +7,11 @@ const config = require("../../../config");
 const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
 const endPointSecret = config.stripe.stripe_webhook_secret;
+const cliEndPointSecret = config.stripe.stripe_cli_webhook_secret;
 
 const createCheckout = async (userData, payload) => {
   const session = await stripe.checkout.sessions.create({
-    // payment_method_types: ["card"],
+    payment_method_types: ["card"],
     mode: "payment",
     success_url: `http://${config.base_url}:${config.port}/payment/success`,
     cancel_url: `http://${config.base_url}:${config.port}/payment/cancel`,
@@ -19,7 +20,7 @@ const createCheckout = async (userData, payload) => {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "Node.js and Express book",
+            name: "Trip price",
           },
           unit_amount: 50 * 100,
         },
@@ -28,12 +29,10 @@ const createCheckout = async (userData, payload) => {
     ],
   });
 
-  // console.log(session);
-
   return session;
 };
 
-const webhookManager = async (request) => {
+const webhookManager2 = async (request) => {
   console.log("hit");
   const sig = request.headers["stripe-signature"];
 
@@ -67,6 +66,45 @@ const webhookManager = async (request) => {
   return event;
 };
 
+const webhookManager = async (request) => {
+  const sig = request.headers["stripe-signature"];
+
+  let event;
+  try {
+    console.log("hit try");
+    event = stripe.webhooks.constructEvent(
+      request.body,
+      sig,
+      "whsec_41c71273d0be8064482c15a2abf32a7e71fdfe3a26822a56670657af08b96ec8"
+    );
+    console.log(event.data.object);
+  } catch (err) {
+    console.log("hit catch");
+    console.log(err);
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  let checkoutSessionCompleted;
+  let paymentIntentSucceeded;
+  // Handle the event
+  switch (event.type) {
+    case "checkout.session.completed":
+      checkoutSessionCompleted = event.data.object;
+      // Then define and call a function to handle the event checkout.session.completed
+      break;
+    case "payment_intent.succeeded":
+      paymentIntentSucceeded = event.data.object;
+      // Then define and call a function to handle the event payment_intent.succeeded
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  return event;
+};
+
 const getAllFeedback = async (query) => {
   const feedbackQuery = new QueryBuilder(Feedback.find({}), query)
     .search([])
@@ -91,6 +129,7 @@ const getAllFeedback = async (query) => {
 
 const PaymentService = {
   webhookManager,
+  webhookManager2,
   createCheckout,
   getAllFeedback,
 };
