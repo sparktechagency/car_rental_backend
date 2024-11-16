@@ -19,10 +19,16 @@ router
     auth(ENUM_USER_ROLE.USER),
     PaymentController.createCheckout
   )
-  .patch(
-    "/refund",
-    auth(ENUM_USER_ROLE.ADMIN),
-    PaymentController.refundPayment
+  .patch("/refund", auth(ENUM_USER_ROLE.ADMIN), PaymentController.refundPayment)
+  .get(
+    "/host-revenue-chart",
+    auth(ENUM_USER_ROLE.HOST),
+    PaymentController.hostRevenueChart
+  )
+  .get(
+    "/host-income-details",
+    auth(ENUM_USER_ROLE.HOST),
+    PaymentController.hostIncomeDetails
   );
 
 module.exports = router;

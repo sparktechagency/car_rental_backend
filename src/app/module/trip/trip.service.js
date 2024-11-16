@@ -2,7 +2,7 @@ const { status } = require("http-status");
 
 const ApiError = require("../../../error/ApiError");
 const Trip = require("../trip/trip.model");
-const { ENUM_USER_ROLE, ENUM_TRIP_STATUS } = require("../../../util/enum");
+const { ENUM_TRIP_STATUS } = require("../../../util/enum");
 const QueryBuilder = require("../../../builder/queryBuilder");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
 const postNotification = require("../../../util/postNotification");

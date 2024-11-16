@@ -214,6 +214,10 @@ const loginAccount = async (payload) => {
       result = await User.findOne({ authId: isAuth._id }).populate("authId");
       role = ENUM_USER_ROLE.USER;
       break;
+    case ENUM_USER_ROLE.HOST:
+      result = await User.findOne({ authId: isAuth._id }).populate("authId");
+      role = ENUM_USER_ROLE.HOST;
+      break;
     case ENUM_USER_ROLE.ADMIN:
       result = await Admin.findOne({ authId: isAuth._id }).populate("authId");
       role = ENUM_USER_ROLE.ADMIN;

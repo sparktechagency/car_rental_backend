@@ -8,6 +8,7 @@ const validateFields = require("../../../util/validateFields");
 const User = require("../user/user.model");
 const { updateCarAndNotify } = require("../../../util/updateCarAndNotify");
 const postNotification = require("../../../util/postNotification");
+const Auth = require("../auth/auth.model");
 
 // destination ========================
 const addDestination = async (req) => {
@@ -215,7 +216,10 @@ const approveCar = async (query) => {
     user.role === ENUM_USER_ROLE.USER &&
     carStatus === ENUM_CAR_STATUS.APPROVED
   ) {
-    await User.findByIdAndUpdate(user._id, { role: ENUM_USER_ROLE.HOST });
+    await Promise.all([
+      User.findByIdAndUpdate(user._id, { role: ENUM_USER_ROLE.HOST }),
+      Auth.updateOne({ _id: user.authId }, { role: ENUM_USER_ROLE.HOST }),
+    ]);
 
     postNotification("Role Updated", `You are a host now.`, user._id);
   }

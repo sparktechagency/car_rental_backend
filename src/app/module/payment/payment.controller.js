@@ -1,6 +1,7 @@
 const { PaymentService } = require("./payment.service");
 const sendResponse = require("../../../shared/sendResponse");
 const catchAsync = require("../../../shared/catchasync");
+const { StripeService } = require("./stripe.service");
 
 const payPage = catchAsync(async (req, res) => {
   res.render("pay.ejs");
@@ -20,7 +21,7 @@ const cancelPage = catchAsync(async (req, res) => {
 // });
 
 const createCheckout = catchAsync(async (req, res) => {
-  const result = await PaymentService.createCheckout(req.user, req.body);
+  const result = await StripeService.createCheckout(req.user, req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -30,7 +31,7 @@ const createCheckout = catchAsync(async (req, res) => {
 });
 
 const webhookManager = catchAsync(async (req, res) => {
-  const result = await PaymentService.webhookManager(req);
+  const result = await StripeService.webhookManager(req);
   res.send();
 });
 
@@ -45,11 +46,32 @@ const getAllPayment = catchAsync(async (req, res) => {
 });
 
 const refundPayment = catchAsync(async (req, res) => {
-  const result = await PaymentService.refundPayment(req.body);
+  const result = await StripeService.refundPayment(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Payment refund Successful",
+    data: result,
+  });
+});
+
+// host only ===========================================================================
+const hostRevenueChart = catchAsync(async (req, res) => {
+  const result = await PaymentService.hostRevenueChart(req.user, req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Host revenue retrieved successfully",
+    data: result,
+  });
+});
+
+const hostIncomeDetails = catchAsync(async (req, res) => {
+  const result = await PaymentService.hostIncomeDetails(req.user, req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Host income details retrieved successfully",
     data: result,
   });
 });
@@ -62,6 +84,8 @@ const PaymentController = {
   webhookManager,
   getAllPayment,
   refundPayment,
+  hostRevenueChart,
+  hostIncomeDetails,
 };
 
 module.exports = { PaymentController };
