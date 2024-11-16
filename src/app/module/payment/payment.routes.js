@@ -9,10 +9,20 @@ router
   .get("/pay", PaymentController.payPage)
   .get("/success", PaymentController.successPage)
   .get("/cancel", PaymentController.cancelPage)
+  .get(
+    "/get-all-payment",
+    auth(ENUM_USER_ROLE.ADMIN),
+    PaymentController.getAllPayment
+  )
   .post(
     "/checkout",
     auth(ENUM_USER_ROLE.USER),
     PaymentController.createCheckout
+  )
+  .patch(
+    "/refund",
+    auth(ENUM_USER_ROLE.ADMIN),
+    PaymentController.refundPayment
   );
 
 module.exports = router;
