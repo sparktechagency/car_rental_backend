@@ -22,12 +22,19 @@ const paymentSchema = new Schema(
       type: Number,
       required: true,
     },
+    refund_amount: {
+      type: Number,
+      default: 0,
+    },
     checkout_session_id: {
       type: String,
       unique: true,
       required: true,
     },
     payment_intent_id: {
+      type: String,
+    },
+    receipt_url: {
       type: String,
     },
     status: {

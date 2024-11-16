@@ -49,7 +49,7 @@ const refundPayment = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Payment retrieval Successful",
+    message: "Payment refund Successful",
     data: result,
   });
 });

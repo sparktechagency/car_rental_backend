@@ -15,7 +15,7 @@ const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
 const endPointSecret = config.stripe.stripe_webhook_secret;
 const cliEndPointSecret = config.stripe.stripe_cli_webhook_secret;
-const sessionAndIntentId = {};
+const sessionIntentReceipt = {};
 
 const createCheckout = async (userData, payload) => {
   const { userId } = userData || {};
@@ -86,22 +86,31 @@ const webhookManager = async (request) => {
 
   switch (event.type) {
     case "checkout.session.completed":
-      sessionAndIntentId.checkout_session_id = event.data.object.id;
+      sessionIntentReceipt.checkout_session_id = event.data.object.id;
       break;
     case "payment_intent.succeeded":
-      sessionAndIntentId.payment_intent_id = event.data.object.id;
+      sessionIntentReceipt.payment_intent_id = event.data.object.id;
+      break;
+    case "charge.updated":
+      sessionIntentReceipt.receipt_url = event.data.object.receipt_url;
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);
+    // console.log(
+    //   "====================================================================================",
+    //   event
+    // );
   }
 
   if (
-    sessionAndIntentId.checkout_session_id &&
-    sessionAndIntentId.payment_intent_id
+    sessionIntentReceipt.checkout_session_id &&
+    sessionIntentReceipt.payment_intent_id &&
+    sessionIntentReceipt.receipt_url
   ) {
-    updatePaymentToDB(sessionAndIntentId);
-    sessionAndIntentId.checkout_session_id = null;
-    sessionAndIntentId.payment_intent_id = null;
+    updatePaymentToDB(sessionIntentReceipt);
+    sessionIntentReceipt.checkout_session_id = null;
+    sessionIntentReceipt.payment_intent_id = null;
+    sessionIntentReceipt.receipt_url = null;
   }
 };
 
@@ -131,7 +140,7 @@ const getAllPayment = async (query) => {
 
 const refundPayment = async (payload) => {
   const { payment_intent_id, amount } = payload;
-  console.log(payload);
+
   validateFields(payload, ["payment_intent_id", "amount"]);
 
   const refund = await stripe.refunds.create({
@@ -139,17 +148,38 @@ const refundPayment = async (payload) => {
     amount: Number(amount) * 100,
   });
 
-  // const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent_id);
-  // console.log(paymentIntent);
+  updatePaymentToDB(null, { payment_intent_id, amount });
+
+  return {
+    status: refund.status,
+    amount: refund.amount / 100,
+    currency: refund.currency,
+  };
 };
 
-const updatePaymentToDB = async (sessionAndIntentId) => {
-  const { checkout_session_id, payment_intent_id } = sessionAndIntentId;
+const updatePaymentToDB = async (sessionIntentReceipt, refundData = null) => {
+  if (refundData) {
+    await Payment.updateOne(
+      { payment_intent_id: refundData.payment_intent_id },
+      {
+        $inc: { refund_amount: Number(refundData.amount) },
+      }
+    );
+    return;
+  }
+
+  const { checkout_session_id, payment_intent_id, receipt_url } =
+    sessionIntentReceipt;
 
   await Payment.updateOne(
     { checkout_session_id },
-    { $set: { payment_intent_id, status: ENUM_PAYMENT_STATUS.SUCCEEDED } },
-    { new: true, runValidators: true }
+    {
+      $set: {
+        payment_intent_id,
+        receipt_url,
+        status: ENUM_PAYMENT_STATUS.SUCCEEDED,
+      },
+    }
   );
 };
 
