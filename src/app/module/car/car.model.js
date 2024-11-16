@@ -119,6 +119,10 @@ const carSchema = new Schema(
       type: Number,
       default: 0,
     },
+    trip: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: ["pending", "approved", "canceled"],

@@ -74,6 +74,9 @@ const UserSchema = new Schema(
       type: Number,
       default: 0,
     },
+    car: {
+      type: Number,
+    },
     trip: {
       type: Number,
     },

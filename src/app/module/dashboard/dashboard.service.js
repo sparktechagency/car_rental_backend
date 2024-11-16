@@ -224,6 +224,15 @@ const approveCar = async (query) => {
     postNotification("Role Updated", `You are a host now.`, user._id);
   }
 
+  if (carStatus === ENUM_CAR_STATUS.APPROVED) {
+    await User.updateOne(
+      {
+        _id: car.user,
+      },
+      { $inc: { car: 1 } }
+    );
+  }
+
   const updatedCar = await updateCarAndNotify(
     carId,
     { status: carStatus },
@@ -237,6 +246,77 @@ const approveCar = async (query) => {
   return updatedCar;
 };
 
+// user-host management ========================
+const getAllUser = async (query) => {
+  const { role } = query;
+
+  validateFields(query, ["role"]);
+
+  const allowedRoles = [ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST];
+
+  if (!allowedRoles.includes(role))
+    throw new ApiError(status.BAD_REQUEST, "Invalid role");
+
+  const usersQuery = new QueryBuilder(User.find(), query)
+    .search(["name", "email"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  if (role === ENUM_USER_ROLE.HOST) {
+  }
+
+  const [result, meta] = await Promise.all([
+    usersQuery.modelQuery,
+    usersQuery.countTotal(),
+  ]);
+
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, `No ${role} found`);
+  }
+  return { meta, result };
+};
+
+const getSingleUser = async (payload) => {
+  const { id } = payload;
+
+  if (!id) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Missing id in params");
+  }
+
+  const client = await Client.findById(id);
+
+  if (!client) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Client not found");
+  }
+
+  return client;
+};
+
+const blockUnblockUser = async (payload) => {
+  const { id, is_block } = payload;
+
+  if (!id || !payload.hasOwnProperty("is_block")) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Missing email or is_block");
+  }
+
+  const client = await Client.findByIdAndUpdate(
+    id,
+    { $set: { is_block } },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).select({ is_block: 1, email: 1 });
+
+  if (!client) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Client not found");
+  }
+
+  return client;
+};
+
 const DashboardService = {
   addDestination,
   getAllDestination,
@@ -245,6 +325,9 @@ const DashboardService = {
   totalOverview,
   getAllAddCarReq,
   approveCar,
+  getAllUser,
+  getSingleUser,
+  blockUnblockUser,
 };
 
 module.exports = DashboardService;
