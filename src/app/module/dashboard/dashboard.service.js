@@ -257,41 +257,41 @@ const getAllUser = async (query) => {
   if (!allowedRoles.includes(role))
     throw new ApiError(status.BAD_REQUEST, "Invalid role");
 
-  const usersQuery = new QueryBuilder(User.find(), query)
+  const usersQuery = new QueryBuilder(User.find().lean(), query)
     .search(["name", "email"])
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  if (role === ENUM_USER_ROLE.HOST) {
-  }
-
   const [result, meta] = await Promise.all([
     usersQuery.modelQuery,
     usersQuery.countTotal(),
   ]);
 
-  if (!result) {
-    throw new ApiError(httpStatus.NOT_FOUND, `No ${role} found`);
-  }
+  if (!result) throw new ApiError(httpStatus.NOT_FOUND, `No ${role} found`);
+
   return { meta, result };
 };
 
-const getSingleUser = async (payload) => {
-  const { id } = payload;
+const getSingleUser = async (query) => {
+  const { userId, role } = query;
 
-  if (!id) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Missing id in params");
+  validateFields(query, ["userId", "role"]);
+
+  if (role === ENUM_USER_ROLE.HOST) {
+    const [cars, user] = await Promise.all([
+      Car.find({ user: userId }),
+      User.findById(userId),
+    ]);
+
+    if (!user) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    return { host: user, cars };
   }
+  const user = await User.findById(userId);
 
-  const client = await Client.findById(id);
-
-  if (!client) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Client not found");
-  }
-
-  return client;
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  return { user };
 };
 
 const blockUnblockUser = async (payload) => {
