@@ -224,6 +224,15 @@ const approveCar = async (query) => {
     postNotification("Role Updated", `You are a host now.`, user._id);
   }
 
+  if (carStatus === ENUM_CAR_STATUS.APPROVED) {
+    await User.updateOne(
+      {
+        _id: car.user,
+      },
+      { $inc: { car: 1 } }
+    );
+  }
+
   const updatedCar = await updateCarAndNotify(
     carId,
     { status: carStatus },
@@ -237,6 +246,73 @@ const approveCar = async (query) => {
   return updatedCar;
 };
 
+// user-host management ========================
+const getAllUser = async (query) => {
+  const { role } = query;
+
+  validateFields(query, ["role"]);
+
+  const allowedRoles = [ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST];
+
+  if (!allowedRoles.includes(role))
+    throw new ApiError(status.BAD_REQUEST, "Invalid role");
+
+  const usersQuery = new QueryBuilder(User.find().lean(), query)
+    .search(["name", "email"])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const [result, meta] = await Promise.all([
+    usersQuery.modelQuery,
+    usersQuery.countTotal(),
+  ]);
+
+  if (!result) throw new ApiError(httpStatus.NOT_FOUND, `No ${role} found`);
+
+  return { meta, result };
+};
+
+const getSingleUser = async (query) => {
+  const { userId, role } = query;
+
+  validateFields(query, ["userId", "role"]);
+
+  if (role === ENUM_USER_ROLE.HOST) {
+    const [cars, user] = await Promise.all([
+      Car.find({ user: userId }),
+      User.findById(userId),
+    ]);
+
+    if (!user) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    return { host: user, cars };
+  }
+  const user = await User.findById(userId);
+
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  return { user };
+};
+
+const blockUnblockUser = async (payload) => {
+  const { authId, isBlocked } = payload;
+
+  validateFields(payload, ["authId", "isBlocked"]);
+
+  const user = await Auth.findByIdAndUpdate(
+    authId,
+    { $set: { isBlocked } },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).select("isBlocked email");
+
+  if (!user) throw new ApiError(status.NOT_FOUND, "User not found");
+
+  return user;
+};
+
 const DashboardService = {
   addDestination,
   getAllDestination,
@@ -245,6 +321,9 @@ const DashboardService = {
   totalOverview,
   getAllAddCarReq,
   approveCar,
+  getAllUser,
+  getSingleUser,
+  blockUnblockUser,
 };
 
 module.exports = DashboardService;

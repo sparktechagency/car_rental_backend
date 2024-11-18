@@ -44,6 +44,23 @@ router
     auth(ENUM_USER_ROLE.ADMIN),
     DashboardController.totalOverview
   )
-  .get("/revenue", auth(ENUM_USER_ROLE.ADMIN), DashboardController.revenue);
+  .get("/revenue", auth(ENUM_USER_ROLE.ADMIN), DashboardController.revenue)
+
+  // user-host management ========================
+  .get(
+    "/get-all-user",
+    auth(ENUM_USER_ROLE.ADMIN),
+    DashboardController.getAllUser
+  )
+  .get(
+    "/get-user-details",
+    auth(ENUM_USER_ROLE.ADMIN),
+    DashboardController.getSingleUser
+  )
+  .patch(
+    "/block-unblock-user",
+    auth(ENUM_USER_ROLE.ADMIN),
+    DashboardController.blockUnblockUser
+  );
 
 module.exports = router;

@@ -9,6 +9,7 @@ const postNotification = require("../../../util/postNotification");
 const validateFields = require("../../../util/validateFields");
 const { isValidDate } = require("../../../util/isValidDate");
 const User = require("../user/user.model");
+const Car = require("../car/car.model");
 
 const addTrip = async (userData, payload) => {
   const { userId } = userData;
@@ -187,12 +188,20 @@ const updateTripStatus = async (payload) => {
   if (tripStatus === ENUM_TRIP_STATUS.COMPLETED) {
     const { user: userId, host: hostId } = updatedTrip;
 
-    await User.updateOne(
-      { _id: hostId },
-      {
-        $inc: { trip: 1 },
-      }
-    );
+    Promise.all([
+      User.updateOne(
+        { _id: hostId },
+        {
+          $inc: { trip: 1 },
+        }
+      ),
+      Car.updateOne(
+        { _id: updatedTrip.car },
+        {
+          $inc: { trip: 1 },
+        }
+      ),
+    ]);
 
     postNotification(
       "Trip Completed",
