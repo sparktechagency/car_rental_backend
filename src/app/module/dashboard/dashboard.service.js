@@ -295,26 +295,22 @@ const getSingleUser = async (query) => {
 };
 
 const blockUnblockUser = async (payload) => {
-  const { id, is_block } = payload;
+  const { authId, isBlocked } = payload;
 
-  if (!id || !payload.hasOwnProperty("is_block")) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Missing email or is_block");
-  }
+  validateFields(payload, ["authId", "isBlocked"]);
 
-  const client = await Client.findByIdAndUpdate(
-    id,
-    { $set: { is_block } },
+  const user = await Auth.findByIdAndUpdate(
+    authId,
+    { $set: { isBlocked } },
     {
       new: true,
       runValidators: true,
     }
-  ).select({ is_block: 1, email: 1 });
+  ).select("isBlocked email");
 
-  if (!client) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Client not found");
-  }
+  if (!user) throw new ApiError(status.NOT_FOUND, "User not found");
 
-  return client;
+  return user;
 };
 
 const DashboardService = {
