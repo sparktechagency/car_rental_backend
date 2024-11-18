@@ -7,6 +7,7 @@
 3. how much surcharge?
 4. what about deposit and refund?
 5. secure payment routes
+6. put only approved cars on main search
 
 #
 

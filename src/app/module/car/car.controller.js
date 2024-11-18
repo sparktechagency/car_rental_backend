@@ -122,6 +122,16 @@ const getAllCar = catchAsync(async (req, res) => {
   });
 });
 
+const topHostsInDestination = catchAsync(async (req, res) => {
+  const result = await CarService.topHostsInDestination(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Top hosts in destination with cars retrieved successfully",
+    data: result,
+  });
+});
+
 const deleteCar = catchAsync(async (req, res) => {
   const result = await CarService.deleteCar(req.query);
   sendResponse(res, {
@@ -145,6 +155,7 @@ const CarController = {
   getSingleCar,
   getMyCar,
   getAllCar,
+  topHostsInDestination,
   deleteCar,
 };
 

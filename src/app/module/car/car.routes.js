@@ -69,6 +69,11 @@ router
     auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
     CarController.getAllCar
   )
+  .get(
+    "/top-hosts-in-destination",
+    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
+    CarController.topHostsInDestination
+  )
   .delete("/delete-car", auth(ENUM_USER_ROLE.ADMIN), CarController.deleteCar);
 
 module.exports = router;

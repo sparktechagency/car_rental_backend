@@ -342,7 +342,7 @@ const approveCar = async (query) => {
       {
         _id: car.user,
       },
-      { $inc: { car: 1 } }
+      { $inc: { carCount: 1 }, $push: { cars: carId } }
     );
   }
 
