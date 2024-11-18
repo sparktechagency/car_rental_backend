@@ -54,6 +54,16 @@ const revenue = catchAsync(async (req, res) => {
   });
 });
 
+const growth = catchAsync(async (req, res) => {
+  const result = await DashboardService.growth(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Growth retrieved successfully",
+    data: result,
+  });
+});
+
 // car ========================
 const getAllAddCarReq = catchAsync(async (req, res) => {
   const result = await DashboardService.getAllAddCarReq(req.query);
@@ -113,6 +123,7 @@ const DashboardController = {
   deleteDestination,
   totalOverview,
   revenue,
+  growth,
   getAllAddCarReq,
   approveCar,
   getAllUser,

@@ -3,12 +3,17 @@ const Destination = require("../destination/destination.model");
 const ApiError = require("../../../error/ApiError");
 const QueryBuilder = require("../../../builder/queryBuilder");
 const Car = require("../car/car.model");
-const { ENUM_CAR_STATUS, ENUM_USER_ROLE } = require("../../../util/enum");
+const {
+  ENUM_CAR_STATUS,
+  ENUM_USER_ROLE,
+  ENUM_PAYMENT_STATUS,
+} = require("../../../util/enum");
 const validateFields = require("../../../util/validateFields");
 const User = require("../user/user.model");
 const { updateCarAndNotify } = require("../../../util/updateCarAndNotify");
 const postNotification = require("../../../util/postNotification");
 const Auth = require("../auth/auth.model");
+const Payment = require("../payment/payment.model");
 
 // destination ========================
 const addDestination = async (req) => {
@@ -79,60 +84,64 @@ const deleteDestination = async (query) => {
 // overview ========================
 const revenue = async (query) => {
   const { year: strYear } = query;
+
+  validateFields(query, ["year"]);
+
   const year = Number(strYear);
-
-  if (!year) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Missing year");
-  }
-
   const startDate = new Date(year, 0, 1);
   const endDate = new Date(year + 1, 0, 1);
 
-  const distinctYears = await Transaction.aggregate([
-    {
-      $group: {
-        _id: { $year: "$createdAt" },
+  const [distinctYears, revenue] = await Promise.all([
+    Payment.aggregate([
+      {
+        $group: {
+          _id: { $year: "$createdAt" },
+        },
       },
-    },
-    {
-      $sort: { _id: -1 },
-    },
-    {
-      $project: {
-        year: "$_id",
-        _id: 0,
+      {
+        $sort: { _id: 1 },
       },
-    },
+      {
+        $project: {
+          year: "$_id",
+          _id: 0,
+        },
+      },
+    ]),
+    Payment.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+          status: ENUM_PAYMENT_STATUS.SUCCEEDED,
+        },
+      },
+      {
+        $project: {
+          amount: 1,
+          refund_amount: 1,
+          month: { $month: "$createdAt" },
+        },
+      },
+      {
+        $group: {
+          _id: "$month",
+          totalRevenue: {
+            $sum: {
+              $subtract: ["$amount", "$refund_amount"],
+            },
+          },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]),
   ]);
 
   const totalYears = distinctYears.map((item) => item.year);
-
-  const revenue = await Subscription.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lt: endDate,
-        },
-        // paymentStatus: "succeeded", // Only include successful payments
-      },
-    },
-    {
-      $project: {
-        price: 1, // Only keep the price field
-        month: { $month: "$createdAt" }, // Extract the month from createdAt
-      },
-    },
-    {
-      $group: {
-        _id: "$month", // Group by the month
-        totalRevenue: { $sum: "$price" }, // Sum up the price for each month
-      },
-    },
-    {
-      $sort: { _id: 1 }, // Sort the result by month (ascending)
-    },
-  ]);
 
   const monthNames = [
     "January",
@@ -166,15 +175,119 @@ const revenue = async (query) => {
 };
 
 const totalOverview = async () => {
-  const [totalAuth, totalUser] = await Promise.all([
-    Auth.countDocuments(),
-    User.countDocuments(),
-    Services.countDocuments(),
-  ]);
+  const [totalAuth, totalUser, totalHost, totalCar, totalEarningAgg] =
+    await Promise.all([
+      Auth.countDocuments(),
+      User.countDocuments({ role: ENUM_USER_ROLE.USER }),
+      User.countDocuments({ role: ENUM_USER_ROLE.HOST }),
+      Car.countDocuments(),
+      Payment.aggregate([
+        {
+          $match: {
+            status: ENUM_PAYMENT_STATUS.SUCCEEDED,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalEarning: {
+              $sum: {
+                $subtract: ["$amount", "$refund_amount"],
+              },
+            },
+          },
+        },
+      ]),
+    ]);
+
+  const totalEarning = totalEarningAgg[0].totalEarning
+    ? totalEarningAgg[0].totalEarning
+    : 0;
 
   return {
     totalAuth,
     totalUser,
+    totalHost,
+    totalCar,
+    totalEarning,
+  };
+};
+
+const growth = async (query) => {
+  const { year: yearStr, role } = query;
+
+  validateFields(query, ["role", "year"]);
+
+  const year = Number(yearStr);
+  const startOfYear = new Date(year, 0, 1);
+  const endOfYear = new Date(year + 1, 0, 1);
+
+  const months = Array.from({ length: 12 }, (_, i) =>
+    new Date(0, i).toLocaleString("en", { month: "long" })
+  );
+
+  // Aggregate monthly registration counts and list of all years
+  const [monthlyRegistration, totalYears] = await Promise.all([
+    Auth.aggregate([
+      {
+        $match: {
+          role: role,
+          createdAt: {
+            $gte: startOfYear,
+            $lt: endOfYear,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          month: "$_id",
+          count: 1,
+          _id: 0,
+        },
+      },
+    ]),
+    Auth.aggregate([
+      {
+        $match: {
+          role: role,
+        },
+      },
+      {
+        $group: {
+          _id: { $year: "$createdAt" },
+        },
+      },
+      {
+        $project: {
+          year: "$_id",
+          _id: 0,
+        },
+      },
+      {
+        $sort: {
+          year: 1,
+        },
+      },
+    ]).then((years) => years.map((y) => y.year)),
+  ]);
+
+  // Initialize result object with all months set to 0
+  const result = months.reduce((acc, month) => ({ ...acc, [month]: 0 }), {});
+
+  // Populate result with actual registration counts
+  monthlyRegistration.forEach(({ month, count }) => {
+    result[months[month - 1]] = count;
+  });
+
+  return {
+    total_years: totalYears,
+    monthlyRegistration: result,
   };
 };
 
@@ -318,6 +431,7 @@ const DashboardService = {
   getAllDestination,
   deleteDestination,
   revenue,
+  growth,
   totalOverview,
   getAllAddCarReq,
   approveCar,

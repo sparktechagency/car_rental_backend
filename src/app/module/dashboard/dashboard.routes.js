@@ -45,6 +45,7 @@ router
     DashboardController.totalOverview
   )
   .get("/revenue", auth(ENUM_USER_ROLE.ADMIN), DashboardController.revenue)
+  .get("/growth", auth(ENUM_USER_ROLE.ADMIN), DashboardController.growth)
 
   // user-host management ========================
   .get(
