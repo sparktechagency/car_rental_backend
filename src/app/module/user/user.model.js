@@ -74,9 +74,15 @@ const UserSchema = new Schema(
       type: Number,
       default: 0,
     },
-    car: {
+    carCount: {
       type: Number,
     },
+    cars: [
+      {
+        type: ObjectId,
+        ref: "Car",
+      },
+    ],
     trip: {
       type: Number,
     },

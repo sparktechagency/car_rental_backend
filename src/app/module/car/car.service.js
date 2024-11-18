@@ -8,10 +8,11 @@ const postNotification = require("../../../util/postNotification");
 const { default: axios } = require("axios");
 const config = require("../../../config");
 const validateFields = require("../../../util/validateFields");
-const { ENUM_CAR_STATUS } = require("../../../util/enum");
+const { ENUM_CAR_STATUS, ENUM_USER_ROLE } = require("../../../util/enum");
 const { updateCarAndNotify } = require("../../../util/updateCarAndNotify");
 const { isValidDate } = require("../../../util/isValidDate");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
+const User = require("../user/user.model");
 
 // update car ===========================
 const addLocation = async (userData, payload) => {
@@ -350,6 +351,7 @@ const getAllCar = async (query) => {
     fromTime,
     toDate,
     toTime,
+    destination,
     minPrice = 1,
     maxPrice,
     vehicleType,
@@ -361,12 +363,12 @@ const getAllCar = async (query) => {
   } = query || {};
 
   validateFields(query, ["fromDate", "fromTime", "toDate", "toTime"]);
-
   dateTimeValidator(fromDate, fromTime);
   dateTimeValidator(toDate, toTime);
 
   const tripStartDateTime = new Date(`${fromDate} ${fromTime}`);
   const tripEndDateTime = new Date(`${toDate} ${toTime}`);
+
   isValidDate([tripStartDateTime, tripEndDateTime]);
 
   const unavailableCars = await Trip.find({
@@ -391,6 +393,7 @@ const getAllCar = async (query) => {
     // status: { $eq: ENUM_CAR_STATUS.APPROVED },
   };
 
+  if (destination) searchFilters.destination = destination;
   if (maxPrice) searchFilters.pricePerDay = { $gte: minPrice, $lte: maxPrice };
   if (vehicleType) searchFilters.vehicleType = vehicleType;
   if (make) searchFilters.make = make;
@@ -411,14 +414,43 @@ const getAllCar = async (query) => {
     };
   }
 
-  const availableCars = await Car.find(searchFilters).collation({
-    locale: "en",
-    strength: 2,
-  });
+  const availableCars = await Car.find(searchFilters)
+    .sort("-rating")
+    .collation({ locale: "en", strength: 2 })
+    .lean();
 
   return {
     count: availableCars.length,
     availableCars,
+  };
+};
+
+const topHostsInDestination = async ({ destination }) => {
+  validateFields({ destination }, ["destination"]);
+
+  const topHostsWithCar = await User.aggregate([
+    {
+      $match: { _id: { $in: await Car.distinct("user", { destination }) } },
+    },
+    {
+      $lookup: {
+        from: "cars", // Assuming "cars" is the collection name
+        localField: "_id",
+        foreignField: "user",
+        as: "cars",
+      },
+    },
+    {
+      $sort: { rating: -1 },
+    },
+    {
+      $limit: 2,
+    },
+  ]);
+
+  return {
+    count: topHostsWithCar.length,
+    topHostsWithCar,
   };
 };
 
@@ -449,6 +481,7 @@ const CarService = {
   getSingleCar,
   getMyCar,
   getAllCar,
+  topHostsInDestination,
   deleteCar,
 };
 
