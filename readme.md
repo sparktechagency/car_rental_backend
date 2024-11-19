@@ -1,5 +1,13 @@
 # Car-Rental
 
+### requirements
+
+1. how do you want to earn? charge the host 10%
+2. what about the deposit?  
+3. the max radius problem? unlimited around UK
+
+4. video system
+
 ### To do
 
 1. Include max distance on car search

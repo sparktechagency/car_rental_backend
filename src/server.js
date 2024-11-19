@@ -1,7 +1,7 @@
 const { errorLogger, logger } = require("./shared/logger");
 const connectDB = require("./connection/connectDB");
 const config = require("./config");
-const app = require("./app");
+const { server: mainServer } = require("./connection/socket");
 
 async function main() {
   try {
@@ -11,7 +11,7 @@ async function main() {
     const port =
       typeof config.port === "number" ? config.port : Number(config.port);
 
-    const server = app.listen(port, config.base_url, () => {
+    const server = mainServer.listen(port, config.base_url, () => {
       logger.info(`App listening on http://${config.base_url}:${config.port}`);
     });
 
