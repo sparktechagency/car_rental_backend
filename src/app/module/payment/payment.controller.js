@@ -76,6 +76,16 @@ const hostIncomeDetails = catchAsync(async (req, res) => {
   });
 });
 
+const onboarding = catchAsync(async (req, res) => {
+  const result = await StripeService.onboarding(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Onboarding link generated",
+    data: result,
+  });
+});
+
 const PaymentController = {
   payPage,
   successPage,
@@ -86,6 +96,7 @@ const PaymentController = {
   refundPayment,
   hostRevenueChart,
   hostIncomeDetails,
+  onboarding,
 };
 
 module.exports = { PaymentController };
