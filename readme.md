@@ -3,7 +3,7 @@
 ### requirements
 
 1. how do you want to earn? charge the host 10%
-2. what about the deposit?  
+2. what about the deposit?
 3. the max radius problem? unlimited around UK
 
 4. video system
@@ -17,7 +17,7 @@
 5. secure payment routes
 6. put only approved cars on main search
 
-#
+# gpt cmd
 
 above is my data model of car and trip. I want to build an advance search, filter system like the one in turo.com. with the below fields.
 

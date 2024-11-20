@@ -29,6 +29,7 @@ router
     "/host-income-details",
     auth(ENUM_USER_ROLE.HOST),
     PaymentController.hostIncomeDetails
-  );
+  )
+  .post("/onboarding", auth(ENUM_USER_ROLE.HOST), PaymentController.onboarding);
 
 module.exports = router;

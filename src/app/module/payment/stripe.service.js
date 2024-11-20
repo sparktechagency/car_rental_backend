@@ -128,6 +128,17 @@ const refundPayment = async (payload) => {
   };
 };
 
+const onboarding = async (payload) => {
+  const accountLink = await stripe.accountLinks.create({
+    account: "acct_1QN5fnAm73CeJSJ4",
+    refresh_url: "https://yourdomain.com/reauth",
+    return_url: "https://yourdomain.com/dashboard",
+    type: "account_onboarding",
+  });
+
+  return accountLink.url;
+};
+
 const updatePaymentToDB = async (sessionIntentReceipt, refundData = null) => {
   if (refundData) {
     await Payment.updateOne(
@@ -174,6 +185,7 @@ const StripeService = {
   webhookManager,
   createCheckout,
   refundPayment,
+  onboarding,
 };
 
 module.exports = { StripeService };

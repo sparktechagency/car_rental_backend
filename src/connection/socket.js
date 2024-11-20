@@ -28,6 +28,7 @@ io.on(ENUM_SOCKET_EVENT.CONNECTION, async (socket) => {
   });
 
   console.log("connection===================================", userId);
+
   socket.on(ENUM_SOCKET_EVENT.DISCONNECT, () => {
     console.log("disconnected===============================", userId);
   });

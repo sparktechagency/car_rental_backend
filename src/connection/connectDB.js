@@ -7,7 +7,7 @@ const connectDB = async () => {
     console.log(`DB connection successful! at ${new Date().toLocaleString()}`);
   } catch (err) {
     console.error("DB Connection Error:", err);
-    process.exit(1);
+    // process.exit(1);
   }
 };
 
