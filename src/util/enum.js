@@ -26,6 +26,10 @@ const ENUM_PAYMENT_STATUS = {
 const ENUM_SOCKET_EVENT = {
   CONNECTION: "connection",
   DISCONNECT: "disconnect",
+  ERROR: "error",
+  START_CHAT: "start-chat",
+  GET_CHAT_MESSAGES: "get-chat-messages",
+  SEND_MESSAGE: "send-message",
 };
 
 module.exports = {

@@ -1,6 +1,8 @@
 const { Server } = require("socket.io");
 const http = require("http");
 const app = require("../app");
+const { ENUM_SOCKET_EVENT } = require("../util/enum");
+const Controller = require("../socket/controller.socket");
 const server = http.createServer(app);
 
 let io;
@@ -9,11 +11,25 @@ io = new Server(server, {
   cors: true,
 });
 
-io.on("connection", (socket) => {
-  console.log("connection ID:", socket.id);
+io.on(ENUM_SOCKET_EVENT.CONNECTION, async (socket) => {
+  const userId = socket.handshake.query.userId || null;
 
-  socket.on("disconnect", () => {
-    console.log("disconnected ID:", socket.id);
+  const user = await Controller.validateUser(socket, userId);
+  if (!user) return;
+
+  socket.join(userId);
+
+  socket.on(ENUM_SOCKET_EVENT.START_CHAT, async (data) => {
+    Controller.startChat(socket, io, userId, data);
+  });
+
+  socket.on(ENUM_SOCKET_EVENT.SEND_MESSAGE, async (data) => {
+    Controller.sendMessage(socket, io, userId, data);
+  });
+
+  console.log("connection===================================", userId);
+  socket.on(ENUM_SOCKET_EVENT.DISCONNECT, () => {
+    console.log("disconnected===============================", userId);
   });
 });
 
