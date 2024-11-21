@@ -27,49 +27,27 @@ const UserSchema = new Schema(
     },
     phone_number: {
       type: String,
-      // required: true,
     },
     address: {
       type: String,
     },
     licenseNumber: {
       type: String,
-      // required: true,
     },
     firstName: {
       type: String,
-      // required: true,
     },
     lastName: {
       type: String,
-      // required: true,
     },
     licenseExpiryDate: {
       type: String, // yyyy-mm-dd
-      // required: true,
     },
     licenseDateOfBirth: {
       type: String, // yyyy-mm-dd
-      // required: true,
     },
 
     // for host
-    accountHolderName: {
-      type: String,
-      // required: true,
-    },
-    accountHolderType: {
-      type: String,
-      // required: true,
-    },
-    accountNo: {
-      type: String,
-      // required: true,
-    },
-    routingNo: {
-      type: String,
-      // required: true,
-    },
     rating: {
       type: Number,
       default: 0,
@@ -86,18 +64,6 @@ const UserSchema = new Schema(
     trip: {
       type: Number,
     },
-    // cardNum: {
-    //   type: Number,
-    //   required: true,
-    // },
-    // expirationDate: {
-    //   type: String,
-    //   required: true,
-    // },
-    // cvc: {
-    //   type: Number,
-    //   required: true,
-    // },
   },
   {
     timestamps: true,

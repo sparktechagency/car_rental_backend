@@ -43,11 +43,6 @@ router
     uploadFile(),
     CarController.updatePhotos
   )
-  // .patch(
-  //   "/update-host-payment-details",
-  //   auth(ENUM_USER_ROLE.HOST),
-  //   CarController.updateHostPaymentDetails
-  // )
   .patch(
     "/send-add-car-req",
     auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.USER),

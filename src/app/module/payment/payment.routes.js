@@ -2,6 +2,7 @@ const express = require("express");
 const auth = require("../../middleware/auth");
 const { ENUM_USER_ROLE } = require("../../../util/enum");
 const { PaymentController } = require("./payment.controller");
+const { uploadFile } = require("../../middleware/fileUploader");
 
 const router = express.Router();
 
@@ -30,6 +31,16 @@ router
     auth(ENUM_USER_ROLE.HOST),
     PaymentController.hostIncomeDetails
   )
-  .post("/onboarding", auth(ENUM_USER_ROLE.HOST), PaymentController.onboarding);
+  .post(
+    "/update-host-payment-details",
+    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
+    uploadFile(),
+    PaymentController.updateHostPaymentDetails
+  )
+  .get(
+    "/get-payout-info",
+    auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    PaymentController.getPayoutInfo
+  );
 
 module.exports = router;
