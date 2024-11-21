@@ -76,12 +76,22 @@ const hostIncomeDetails = catchAsync(async (req, res) => {
   });
 });
 
-const onboarding = catchAsync(async (req, res) => {
-  const result = await StripeService.onboarding(req.body);
+const updateHostPaymentDetails = catchAsync(async (req, res) => {
+  const result = await StripeService.updateHostPaymentDetails(req);
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Onboarding link generated",
+    message: result.message ? result.message : "Host payment details updated",
+    data: result.data ? result.data : result,
+  });
+});
+
+const getPayoutInfo = catchAsync(async (req, res) => {
+  const result = await StripeService.getPayoutInfo(req.user);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Host payout info retrieved",
     data: result,
   });
 });
@@ -96,7 +106,8 @@ const PaymentController = {
   refundPayment,
   hostRevenueChart,
   hostIncomeDetails,
-  onboarding,
+  updateHostPaymentDetails,
+  getPayoutInfo,
 };
 
 module.exports = { PaymentController };

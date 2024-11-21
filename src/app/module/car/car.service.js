@@ -239,10 +239,6 @@ const updatePhotos = async (req) => {
   return updatedCar;
 };
 
-const updateHostPaymentDetails = async (userData, payload) => {
-  const { userId } = userData;
-};
-
 const updateAllCarData = async (userData, payload) => {
   const { carId } = payload;
 
@@ -475,7 +471,6 @@ const CarService = {
   updateHostLicense,
   updateDetails,
   updatePhotos,
-  updateHostPaymentDetails,
   sendAddCarReq,
   updateAllCarData,
   getSingleCar,

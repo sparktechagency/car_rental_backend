@@ -9,6 +9,9 @@ const Payment = require("./payment.model");
 const { ENUM_PAYMENT_STATUS } = require("../../../util/enum");
 const catchAsync = require("../../../shared/catchasync");
 const { logger } = require("../../../shared/logger");
+const User = require("../user/user.model");
+const PayoutInfo = require("./payoutInfo.model");
+const dateTimeValidator = require("../../../util/dateTimeValidator");
 
 const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
@@ -128,15 +131,96 @@ const refundPayment = async (payload) => {
   };
 };
 
-const onboarding = async (payload) => {
-  const accountLink = await stripe.accountLinks.create({
-    account: "acct_1QN5fnAm73CeJSJ4",
-    refresh_url: "https://yourdomain.com/reauth",
-    return_url: "https://yourdomain.com/dashboard",
-    type: "account_onboarding",
-  });
+const updateHostPaymentDetails = async (req) => {
+  const { user: userData, body: payload } = req;
+  const { userId, email } = userData;
+  const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const {
+    website_url: url,
+    first_name,
+    last_name,
+    phone,
+    bank_account_no,
+    routing_no,
+    dateOfBirth,
+    ssn_last_4,
+  } = payload || {};
 
-  return accountLink.url;
+  validateFields(payload, [
+    "website_url",
+    "first_name",
+    "last_name",
+    "phone",
+    "bank_account_no",
+    "routing_no",
+    "dateOfBirth",
+    "ssn_last_4",
+  ]);
+
+  dateTimeValidator(dateOfBirth);
+  const [day, month, year] = dateOfBirth.split("/");
+
+  const payoutInfo = await getPayoutInfo(userData);
+
+  if (payoutInfo)
+    return { message: "Payout info already exists", data: payoutInfo };
+
+  const stripeAccountData = {
+    type: "custom",
+    country: "US",
+    email,
+    business_profile: {
+      url,
+    },
+    business_type: "individual",
+    individual: {
+      first_name,
+      last_name,
+      phone,
+      dob: {
+        day: day,
+        month: month,
+        year: year,
+      },
+      ssn_last_4,
+    },
+    external_account: {
+      object: "bank_account",
+      account_number: bank_account_no,
+      routing_number: routing_no,
+      country: "US",
+    },
+    capabilities: {
+      transfers: { requested: true },
+    },
+    tos_acceptance: {
+      date: Math.floor(Date.now() / 1000),
+      ip: `${clientIp}`,
+    },
+  };
+
+  const account = await stripe.accounts.create(stripeAccountData);
+
+  const payoutData = {
+    host: userId,
+    stripe_account_id: account.id,
+    bank_account_no,
+    routing_no,
+  };
+
+  const newPayoutInfo = await PayoutInfo.create(payoutData);
+
+  return newPayoutInfo;
+};
+
+const getPayoutInfo = async (userData) => {
+  const { userId } = userData;
+
+  const existingPayoutInfo = await PayoutInfo.findOne({ host: userId });
+  if (!existingPayoutInfo)
+    throw new ApiError(status.NOT_FOUND, "Pay out info does not exist");
+
+  return existingPayoutInfo;
 };
 
 const updatePaymentToDB = async (sessionIntentReceipt, refundData = null) => {
@@ -185,7 +269,8 @@ const StripeService = {
   webhookManager,
   createCheckout,
   refundPayment,
-  onboarding,
+  getPayoutInfo,
+  updateHostPaymentDetails,
 };
 
 module.exports = { StripeService };
