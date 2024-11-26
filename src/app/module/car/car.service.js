@@ -129,31 +129,20 @@ const updateTransmission = async (userData, payload) => {
   return updatedCar;
 };
 
-const updateHostLicense = async (userData, payload) => {
+const updateHostLicense = async (req) => {
+  const { user: userData, body: payload, files } = req || {};
   const { userId } = userData;
-  const {
-    carId,
-    pricePerDay,
-    maxTravelDistancePerDay,
-    finePerKm,
-    hostLicenseNumber,
-    hostFirstName,
-    hostLastName,
-    hostLicenseExpiryDate,
-    hostLicenseDateOfBirth,
-  } = payload;
+  const { hostLicenseFrontImage, hostLicenseBackImage } = files || {};
+  const { carId, pricePerDay, maxTravelDistancePerDay, finePerKm } =
+    payload || {};
 
   validateFields(payload, [
     "carId",
     "pricePerDay",
     "maxTravelDistancePerDay",
     "finePerKm",
-    "hostLicenseNumber",
-    "hostFirstName",
-    "hostLastName",
-    "hostLicenseExpiryDate",
-    "hostLicenseDateOfBirth",
   ]);
+  validateFields(files, ["hostLicenseFrontImage", "hostLicenseBackImage"]);
 
   const updatedCar = await updateCarAndNotify(
     carId,
@@ -161,11 +150,8 @@ const updateHostLicense = async (userData, payload) => {
       pricePerDay,
       maxTravelDistancePerDay,
       finePerKm,
-      hostLicenseNumber,
-      hostFirstName,
-      hostLastName,
-      hostLicenseExpiryDate,
-      hostLicenseDateOfBirth,
+      hostLicenseFrontImage: hostLicenseFrontImage[0].path,
+      hostLicenseBackImage: hostLicenseBackImage[0].path,
     },
     userId,
     "You have updated host license details for your car"

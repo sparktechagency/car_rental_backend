@@ -5,20 +5,22 @@ const User = require("./user.model");
 const Auth = require("../auth/auth.model");
 
 const updateProfile = async (req) => {
-  const { files, body: data } = req;
+  const { files, body: data } = req || {};
   const { userId, authId } = req.user;
 
-  if (!Object.keys(data).length)
-    throw new ApiError(
-      status.BAD_REQUEST,
-      "Data is missing in the request body!"
-    );
+  const getFilePath = (file) => (file && file[0]?.path) || "";
 
-  let profile_image;
-  if (files && files.profile_image)
-    profile_image = `/${files.profile_image[0].path}`;
+  const updatedData = {
+    ...data,
+    profile_image: getFilePath(files?.profile_image),
+    licenseFrontImage: getFilePath(files?.licenseFrontImage),
+    licenseBackImage: getFilePath(files?.licenseBackImage),
+  };
 
-  const updatedData = { ...data };
+  for (let key in updatedData) {
+    if (!updatedData[key]) delete updatedData[key];
+  }
+
   const [auth, user] = await Promise.all([
     Auth.findByIdAndUpdate(
       authId,
@@ -29,7 +31,9 @@ const updateProfile = async (req) => {
     ),
     User.findByIdAndUpdate(
       userId,
-      { profile_image, ...updatedData },
+      {
+        $set: updatedData,
+      },
       {
         new: true,
       }

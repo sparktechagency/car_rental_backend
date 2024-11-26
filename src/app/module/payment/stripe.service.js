@@ -223,6 +223,55 @@ const getPayoutInfo = async (userData) => {
   return existingPayoutInfo;
 };
 
+const transferPayment = async (payload) => {
+  const { paymentId } = payload;
+
+  validateFields(payload, ["paymentId"]);
+
+  const payment = await Payment.findById(paymentId);
+  if (!payment) throw new ApiError(status.NOT_FOUND, "Payment not found");
+
+  const hostPayoutInfo = await PayoutInfo.findOne({ host: payment.host });
+  if (!hostPayoutInfo)
+    throw new ApiError(status.NOT_FOUND, "Host payout info does not exist");
+
+  const transferObj = {
+    // amount: Math.ceil(payment.amount * 100 * 0.9),
+    amount: Math.ceil(20 * 100 * 0.9),
+    currency: "usd",
+    // destination: hostPayoutInfo.stripe_account_id,
+    destination: "acct_1QOI4tBA1SkqjBUj",
+  };
+
+  const transfer = await stripe.transfers.create(transferObj);
+
+  const [payouts, accountBalance] = await Promise.all([
+    stripe.payouts.list({
+      stripeAccount: "acct_1QOHaqB7N4lZtOmr",
+    }),
+    stripe.balance.retrieve({
+      stripeAccount: "acct_1QOHaqB7N4lZtOmr",
+    }),
+  ]);
+
+  console.log(payouts, accountBalance);
+
+  Promise.all([
+    Payment.updateOne(
+      { _id: paymentId },
+      {
+        transferred_amount: payment.amount * 0.9,
+        status: ENUM_PAYMENT_STATUS.TRANSFERRED,
+      }
+    ),
+  ]);
+
+  return {
+    amount: payment.amount * 0.9,
+    profit: payment.amount * 0.1,
+  };
+};
+
 const updatePaymentToDB = async (sessionIntentReceipt, refundData = null) => {
   if (refundData) {
     await Payment.updateOne(
@@ -271,6 +320,7 @@ const StripeService = {
   refundPayment,
   getPayoutInfo,
   updateHostPaymentDetails,
+  transferPayment,
 };
 
 module.exports = { StripeService };

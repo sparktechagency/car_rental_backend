@@ -12,6 +12,14 @@ const uploadFile = () => {
         uploadPath = "uploads/images/car";
       } else if (file.fieldname === "destination_image") {
         uploadPath = "uploads/images/destination";
+      } else if (file.fieldname === "licenseFrontImage") {
+        uploadPath = "uploads/images/licenseImage";
+      } else if (file.fieldname === "licenseBackImage") {
+        uploadPath = "uploads/images/licenseImage";
+      } else if (file.fieldname === "hostLicenseFrontImage") {
+        uploadPath = "uploads/images/licenseImage";
+      } else if (file.fieldname === "hostLicenseBackImage") {
+        uploadPath = "uploads/images/licenseImage";
       } else {
         uploadPath = "uploads";
       }
@@ -42,6 +50,10 @@ const uploadFile = () => {
       "profile_image",
       "car_image",
       "destination_image",
+      "licenseFrontImage",
+      "licenseBackImage",
+      "hostLicenseFrontImage",
+      "hostLicenseBackImage",
     ];
 
     if (file.fieldname === undefined) {
@@ -70,6 +82,10 @@ const uploadFile = () => {
     { name: "profile_image", maxCount: 1 },
     { name: "car_image", maxCount: 15 },
     { name: "destination_image", maxCount: 1 },
+    { name: "licenseFrontImage", maxCount: 1 },
+    { name: "licenseBackImage", maxCount: 1 },
+    { name: "hostLicenseFrontImage", maxCount: 1 },
+    { name: "hostLicenseBackImage", maxCount: 1 },
   ]);
 
   return upload;
