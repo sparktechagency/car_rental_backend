@@ -96,6 +96,16 @@ const getPayoutInfo = catchAsync(async (req, res) => {
   });
 });
 
+const transferPayment = catchAsync(async (req, res) => {
+  const result = await StripeService.transferPayment(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Payment transfer successful",
+    data: result,
+  });
+});
+
 const PaymentController = {
   payPage,
   successPage,
@@ -108,6 +118,7 @@ const PaymentController = {
   hostIncomeDetails,
   updateHostPaymentDetails,
   getPayoutInfo,
+  transferPayment,
 };
 
 module.exports = { PaymentController };

@@ -24,7 +24,9 @@ const paymentSchema = new Schema(
     },
     refund_amount: {
       type: Number,
-      default: 0,
+    },
+    transferred_amount: {
+      type: Number,
     },
     checkout_session_id: {
       type: String,
@@ -39,7 +41,7 @@ const paymentSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["unpaid", "succeeded", "refunded"],
+      enum: ["unpaid", "succeeded", "refunded", "transferred"],
       default: "unpaid",
     },
   },

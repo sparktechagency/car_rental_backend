@@ -31,20 +31,11 @@ const UserSchema = new Schema(
     address: {
       type: String,
     },
-    licenseNumber: {
+    licenseFrontImage: {
       type: String,
     },
-    firstName: {
+    licenseBackImage: {
       type: String,
-    },
-    lastName: {
-      type: String,
-    },
-    licenseExpiryDate: {
-      type: String, // yyyy-mm-dd
-    },
-    licenseDateOfBirth: {
-      type: String, // yyyy-mm-dd
     },
 
     // for host

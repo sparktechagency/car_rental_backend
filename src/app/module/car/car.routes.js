@@ -30,6 +30,7 @@ router
   .patch(
     "/update-host-license",
     auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.USER),
+    uploadFile(),
     CarController.updateHostLicense
   )
   .patch(

@@ -41,6 +41,11 @@ router
     "/get-payout-info",
     auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
     PaymentController.getPayoutInfo
+  )
+  .patch(
+    "/transfer-payment",
+    auth(ENUM_USER_ROLE.ADMIN),
+    PaymentController.transferPayment
   );
 
 module.exports = router;

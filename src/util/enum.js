@@ -21,6 +21,7 @@ const ENUM_PAYMENT_STATUS = {
   UNPAID: "unpaid",
   SUCCEEDED: "succeeded",
   REFUNDED: "refunded",
+  TRANSFERRED: "transferred",
 };
 
 const ENUM_SOCKET_EVENT = {

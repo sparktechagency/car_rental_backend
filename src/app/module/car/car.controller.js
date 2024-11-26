@@ -43,7 +43,7 @@ const updateTransmission = catchAsync(async (req, res) => {
 });
 
 const updateHostLicense = catchAsync(async (req, res) => {
-  const result = await CarService.updateHostLicense(req.user, req.body);
+  const result = await CarService.updateHostLicense(req);
   sendResponse(res, {
     statusCode: 200,
     success: true,
