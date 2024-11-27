@@ -227,7 +227,7 @@ const growth = async (query) => {
   );
 
   // Aggregate monthly registration counts and list of all years
-  const [monthlyRegistration, totalYears] = await Promise.all([
+  const [monthlyRegistration, distinctYears] = await Promise.all([
     Auth.aggregate([
       {
         $match: {
@@ -274,8 +274,10 @@ const growth = async (query) => {
           year: 1,
         },
       },
-    ]).then((years) => years.map((y) => y.year)),
+    ]),
   ]);
+
+  const total_years = distinctYears.map((item) => item.year);
 
   // Initialize result object with all months set to 0
   const result = months.reduce((acc, month) => ({ ...acc, [month]: 0 }), {});
@@ -286,7 +288,7 @@ const growth = async (query) => {
   });
 
   return {
-    total_years: totalYears,
+    total_years,
     monthlyRegistration: result,
   };
 };

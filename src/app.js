@@ -16,7 +16,13 @@ app.set("view engine", "ejs");
 
 app.use(
   cors({
-    origin: [],
+    origin: [
+      "http://192.168.10.26:3001",
+      "http://192.168.10.26:3002",
+      "http://192.168.10.26:3003",
+      "http://192.168.10.26:3004",
+      "http://192.168.10.26:3005",
+    ],
     credentials: true,
   })
 );
