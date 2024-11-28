@@ -152,6 +152,96 @@ const deleteContactUs = catchAsync(async (req, res) => {
   });
 });
 
+const addTipsTricks = catchAsync(async (req, res) => {
+  const result = await ManageService.addTipsTricks(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message ? result.message : "Successful",
+    data: result.result ? result.result : result,
+  });
+});
+
+const getTipsTricks = catchAsync(async (req, res) => {
+  const result = await ManageService.getTipsTricks();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Successful",
+    data: result,
+  });
+});
+
+const deleteTipsTricks = catchAsync(async (req, res) => {
+  const result = await ManageService.deleteTipsTricks(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Deletion Successful",
+    data: result,
+  });
+});
+
+const addTrustSafety = catchAsync(async (req, res) => {
+  const result = await ManageService.addTrustSafety(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message ? result.message : "Successful",
+    data: result.result ? result.result : result,
+  });
+});
+
+const getTrustSafety = catchAsync(async (req, res) => {
+  const result = await ManageService.getTrustSafety();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Successful",
+    data: result,
+  });
+});
+
+const deleteTrustSafety = catchAsync(async (req, res) => {
+  const result = await ManageService.deleteTrustSafety(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Deletion Successful",
+    data: result,
+  });
+});
+
+const addHostGuidelines = catchAsync(async (req, res) => {
+  const result = await ManageService.addHostGuidelines(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message ? result.message : "Successful",
+    data: result.result ? result.result : result,
+  });
+});
+
+const getHostGuidelines = catchAsync(async (req, res) => {
+  const result = await ManageService.getHostGuidelines();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Successful",
+    data: result,
+  });
+});
+
+const deleteHostGuidelines = catchAsync(async (req, res) => {
+  const result = await ManageService.deleteHostGuidelines(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Deletion Successful",
+    data: result,
+  });
+});
+
 const ManageController = {
   addPrivacyPolicy,
   getPrivacyPolicy,
@@ -168,6 +258,15 @@ const ManageController = {
   addContactUs,
   getContactUs,
   deleteContactUs,
+  addTipsTricks,
+  getTipsTricks,
+  deleteTipsTricks,
+  addTrustSafety,
+  getTrustSafety,
+  deleteTrustSafety,
+  addHostGuidelines,
+  getHostGuidelines,
+  deleteHostGuidelines,
 };
 
 module.exports = ManageController;

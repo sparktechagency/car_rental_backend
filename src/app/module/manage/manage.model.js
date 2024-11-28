@@ -65,10 +65,49 @@ const contactUsSchema = new mongoose.Schema(
   }
 );
 
+const tipsTricksSchema = new mongoose.Schema(
+  {
+    description: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const trustSafetySchema = new mongoose.Schema(
+  {
+    description: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const hostGuidelinesSchema = new mongoose.Schema(
+  {
+    description: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 module.exports = {
   PrivacyPolicy: model("PrivacyPolicy", privacySchema),
   TermsConditions: model("TermsConditions", termsAndConditionsSchema),
   FAQ: model("FAQ", faqSchema),
   AboutUs: model("AboutUs", aboutUsSchema),
   ContactUs: model("ContactUs", contactUsSchema),
+  TipsTricks: model("TipsTricks", tipsTricksSchema),
+  TrustSafety: model("TrustSafety", trustSafetySchema),
+  HostGuidelines: model("HostGuidelines", hostGuidelinesSchema),
 };

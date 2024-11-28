@@ -52,6 +52,39 @@ router
     "/delete-contact-us",
     auth(ENUM_USER_ROLE.ADMIN),
     ManageController.deleteContactUs
+  )
+  .post(
+    "/add-tips-tricks",
+    auth(ENUM_USER_ROLE.ADMIN),
+    ManageController.addTipsTricks
+  )
+  .get("/get-tips-tricks", ManageController.getTipsTricks)
+  .delete(
+    "/delete-tips-tricks",
+    auth(ENUM_USER_ROLE.ADMIN),
+    ManageController.deleteTipsTricks
+  )
+  .post(
+    "/add-trust-safety",
+    auth(ENUM_USER_ROLE.ADMIN),
+    ManageController.addTrustSafety
+  )
+  .get("/get-trust-safety", ManageController.getTrustSafety)
+  .delete(
+    "/delete-trust-safety",
+    auth(ENUM_USER_ROLE.ADMIN),
+    ManageController.deleteTrustSafety
+  )
+  .post(
+    "/add-host-guidelines",
+    auth(ENUM_USER_ROLE.ADMIN),
+    ManageController.addHostGuidelines
+  )
+  .get("/get-host-guidelines", ManageController.getHostGuidelines)
+  .delete(
+    "/delete-host-guidelines",
+    auth(ENUM_USER_ROLE.ADMIN),
+    ManageController.deleteHostGuidelines
   );
 
 module.exports = router;
