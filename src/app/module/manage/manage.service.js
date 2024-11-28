@@ -5,6 +5,9 @@ const {
   AboutUs,
   FAQ,
   ContactUs,
+  HostGuidelines,
+  TipsTricks,
+  TrustSafety,
 } = require("../manage/manage.model");
 const ApiError = require("../../../error/ApiError");
 const validateFields = require("../../../util/validateFields");
@@ -165,6 +168,105 @@ const deleteContactUs = async (query) => {
   return result;
 };
 
+const addHostGuidelines = async (payload) => {
+  const checkIsExist = await HostGuidelines.findOne();
+
+  if (checkIsExist) {
+    const result = await HostGuidelines.findOneAndUpdate({}, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    return {
+      message: "Host Guidelines updated",
+      result,
+    };
+  } else {
+    return await HostGuidelines.create(payload);
+  }
+};
+
+const getHostGuidelines = async () => {
+  return await HostGuidelines.findOne({});
+};
+
+const deleteHostGuidelines = async (query) => {
+  const { id } = query;
+
+  const result = await HostGuidelines.deleteOne({ _id: id });
+
+  if (!result.deletedCount)
+    throw new ApiError(status.NOT_FOUND, "Host Guidelines not found");
+
+  return result;
+};
+
+const addTipsTricks = async (payload) => {
+  const checkIsExist = await TipsTricks.findOne();
+
+  if (checkIsExist) {
+    const result = await TipsTricks.findOneAndUpdate({}, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    return {
+      message: "Tips Tricks updated",
+      result,
+    };
+  } else {
+    return await TipsTricks.create(payload);
+  }
+};
+
+const getTipsTricks = async () => {
+  return await TipsTricks.findOne({});
+};
+
+const deleteTipsTricks = async (query) => {
+  const { id } = query;
+
+  const result = await TipsTricks.deleteOne({ _id: id });
+
+  if (!result.deletedCount)
+    throw new ApiError(status.NOT_FOUND, "Tips Tricks not found");
+
+  return result;
+};
+
+const addTrustSafety = async (payload) => {
+  const checkIsExist = await TrustSafety.findOne();
+
+  if (checkIsExist) {
+    const result = await TrustSafety.findOneAndUpdate({}, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    return {
+      message: "Trust Safety updated",
+      result,
+    };
+  } else {
+    return await TrustSafety.create(payload);
+  }
+};
+
+const getTrustSafety = async () => {
+  return await TrustSafety.findOne({});
+};
+
+const deleteTrustSafety = async (query) => {
+  const { id } = query;
+
+  const result = await TrustSafety.deleteOne({ _id: id });
+
+  if (!result.deletedCount)
+    throw new ApiError(status.NOT_FOUND, "Trust Safety not found");
+
+  return result;
+};
+
 const ManageService = {
   addPrivacyPolicy,
   getPrivacyPolicy,
@@ -181,6 +283,15 @@ const ManageService = {
   addContactUs,
   getContactUs,
   deleteContactUs,
+  addHostGuidelines,
+  getHostGuidelines,
+  deleteHostGuidelines,
+  addTipsTricks,
+  getTipsTricks,
+  deleteTipsTricks,
+  addTrustSafety,
+  getTrustSafety,
+  deleteTrustSafety,
 };
 
 module.exports = ManageService;

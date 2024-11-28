@@ -17,6 +17,10 @@
 5. secure payment routes
 6. put only approved cars on main search
 
+tips and tricks
+trust and safety
+host guidelines
+
 # gpt cmd
 
 above is my data model of car and trip. I want to build an advance search, filter system like the one in turo.com. with the below fields.
