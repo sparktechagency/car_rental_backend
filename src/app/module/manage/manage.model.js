@@ -55,9 +55,11 @@ const aboutUsSchema = new mongoose.Schema(
 
 const contactUsSchema = new mongoose.Schema(
   {
-    description: {
-      type: String,
-      required: true,
+    callToUs: {
+      type: Array,
+    },
+    writeToUs: {
+      type: Array,
     },
   },
   {

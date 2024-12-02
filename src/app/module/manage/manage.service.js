@@ -136,6 +136,8 @@ const deleteFaq = async (query) => {
 };
 
 const addContactUs = async (payload) => {
+  validateFields(payload, ["callToUs", "writeToUs"]);
+
   const checkIsExist = await ContactUs.findOne();
 
   if (checkIsExist) {
