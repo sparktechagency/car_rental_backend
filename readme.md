@@ -16,6 +16,10 @@
 4. what about deposit and refund?
 5. secure payment routes
 6. put only approved cars on main search
+7. email notification on booking request
+8. fee 12.5%
+9. young driver fee and a cleaning fee dynamic
+10. expanding the map
 
 tips and tricks
 trust and safety

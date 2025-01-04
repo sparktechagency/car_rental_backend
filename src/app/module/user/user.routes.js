@@ -10,7 +10,7 @@ router
   .get("/profile", auth(ENUM_USER_ROLE.USER), UserController.getProfile)
   .patch(
     "/edit-profile",
-    auth(ENUM_USER_ROLE.USER),
+    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
     uploadFile(),
     UserController.updateProfile
   )
