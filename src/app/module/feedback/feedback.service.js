@@ -10,7 +10,7 @@ const postFeedback = async (userData, payload) => {
   const { userId } = userData;
   const feedbackData = { user: userId, ...payload };
 
-  validateFields(payload, ["userName", "subject", "feedback"]);
+  validateFields(payload, ["subject", "feedback"]);
 
   const result = await Feedback.create(feedbackData);
 
