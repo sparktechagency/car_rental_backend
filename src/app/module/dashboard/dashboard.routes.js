@@ -27,11 +27,7 @@ router
     uploadFile(),
     DashboardController.addDestination
   )
-  .get(
-    "/get-all-destination",
-    auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.USER),
-    DashboardController.getAllDestination
-  )
+  .get("/get-all-destination", DashboardController.getAllDestination)
   .delete(
     "/delete-destination",
     auth(ENUM_USER_ROLE.ADMIN),

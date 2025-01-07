@@ -302,6 +302,11 @@ const sendAddCarReq = async (userData, query) => {
   return updatedCar;
 };
 
+const getAllBrands = async () => {
+  const brands = await Car.find({}).select("-_id make");
+  return brands;
+};
+
 const getSingleCar = async (query) => {
   const { carId } = query;
 
@@ -459,6 +464,7 @@ const CarService = {
   updatePhotos,
   sendAddCarReq,
   updateAllCarData,
+  getAllBrands,
   getSingleCar,
   getMyCar,
   getAllCar,

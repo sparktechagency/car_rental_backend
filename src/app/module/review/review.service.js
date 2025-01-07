@@ -84,15 +84,26 @@ const getAllReview = async (query) => {
   const { carId, ...newQuery } = query;
 
   let reviewQuery;
+  let populateObj = {
+    path: "user",
+    select: "name profile_image -_id",
+  };
+
   if (carId) {
-    reviewQuery = new QueryBuilder(Review.find({ car: carId }), newQuery)
+    reviewQuery = new QueryBuilder(
+      Review.find({ car: carId }).populate(populateObj),
+      newQuery
+    )
       .search([])
       .filter()
       .sort()
       .paginate()
       .fields();
   } else {
-    reviewQuery = new QueryBuilder(Review.find({}), newQuery)
+    reviewQuery = new QueryBuilder(
+      Review.find({}).populate(populateObj),
+      newQuery
+    )
       .search([])
       .filter()
       .sort()

@@ -54,22 +54,11 @@ router
     auth(ENUM_USER_ROLE.HOST),
     CarController.updateAllCarData
   )
-  .get(
-    "/get-single-car-details",
-    auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
-    CarController.getSingleCar
-  )
+  .get("/get-all-brands", CarController.getAllBrands)
+  .get("/get-single-car-details", CarController.getSingleCar)
   .get("/get-my-car", auth(ENUM_USER_ROLE.HOST), CarController.getMyCar)
-  .get(
-    "/get-all-car",
-    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
-    CarController.getAllCar
-  )
-  .get(
-    "/top-hosts-in-destination",
-    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
-    CarController.topHostsInDestination
-  )
+  .get("/get-all-car", CarController.getAllCar)
+  .get("/top-hosts-in-destination", CarController.topHostsInDestination)
   .delete("/delete-car", auth(ENUM_USER_ROLE.ADMIN), CarController.deleteCar);
 
 module.exports = router;
