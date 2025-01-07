@@ -86,7 +86,7 @@ const getAllReview = async (query) => {
   let reviewQuery;
   let populateObj = {
     path: "user",
-    select: "name profile_image -_id",
+    select: "name profile_image address -_id",
   };
 
   if (carId) {
