@@ -12,6 +12,7 @@ const ReviewRoutes = require("../module/review/review.routes");
 const FavoriteRoutes = require("../module/favorite/favorite.routes");
 const ChatRoutes = require("../module/chat/chat.routes");
 const PaymentRoutes = require("../module/payment/payment.routes");
+const NotificationRoutes = require("../module/notification/notification.routes");
 
 const moduleRoutes = [
   {
@@ -61,6 +62,10 @@ const moduleRoutes = [
   {
     path: "/payment",
     route: PaymentRoutes,
+  },
+  {
+    path: "/notification",
+    route: NotificationRoutes,
   },
 ];
 
