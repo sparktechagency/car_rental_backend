@@ -296,7 +296,12 @@ const growth = async (query) => {
 // car ========================
 const getAllAddCarReq = async (query) => {
   const addCarReqQuery = new QueryBuilder(
-    Car.find({ status: { $eq: ENUM_CAR_STATUS.PENDING } }).lean(),
+    Car.find({ status: { $eq: ENUM_CAR_STATUS.PENDING } })
+      .populate({
+        path: "user",
+        select: "name email profile_image phone_number",
+      })
+      .lean(),
     query
   )
     .search(["make model year licensePlateNum"])
@@ -310,8 +315,8 @@ const getAllAddCarReq = async (query) => {
     addCarReqQuery.countTotal(),
   ]);
 
-  if (!allAddCarReq.length)
-    throw new ApiError(status.NOT_FOUND, "Add car requests not found");
+  // if (!allAddCarReq.length)
+  //   throw new ApiError(status.NOT_FOUND, "Add car requests not found");
 
   return {
     meta,
@@ -372,7 +377,10 @@ const getAllUser = async (query) => {
   if (!allowedRoles.includes(role))
     throw new ApiError(status.BAD_REQUEST, "Invalid role");
 
-  const usersQuery = new QueryBuilder(User.find().lean(), query)
+  const usersQuery = new QueryBuilder(
+    User.find().populate({ path: "authId", select: "isBlocked" }).lean(),
+    query
+  )
     .search(["name", "email"])
     .filter()
     .sort()
@@ -412,7 +420,7 @@ const getSingleUser = async (query) => {
 const blockUnblockUser = async (payload) => {
   const { authId, isBlocked } = payload;
 
-  validateFields(payload, ["authId", "isBlocked"]);
+  validateFields(payload, ["authId"]);
 
   const user = await Auth.findByIdAndUpdate(
     authId,
