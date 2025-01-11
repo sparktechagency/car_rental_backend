@@ -260,7 +260,7 @@ const updatePaymentToDB = async (eventData) => {
   const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent);
 
   const charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
-  console.log("test");
+
   await Payment.findOneAndUpdate(
     { checkout_session_id: id },
     {
