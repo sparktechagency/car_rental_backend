@@ -12,7 +12,7 @@ const User = require("../user/user.model");
 const postReview = async (userData, payload) => {
   const { userId } = userData;
   const { carId } = payload || {};
-  const ReviewData = {
+  const reviewData = {
     user: userId,
     car: carId,
     ...payload,
@@ -23,8 +23,9 @@ const postReview = async (userData, payload) => {
 
   const car = await Car.findById(payload.carId).select("user make").lean();
   if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
+  reviewData.host = car.user;
 
-  const result = await Review.create(ReviewData);
+  const result = await Review.create(reviewData);
 
   const [avgCarRatingAgg, avgHostRatingAgg] = await Promise.all([
     Review.aggregate([
@@ -81,17 +82,20 @@ const postReview = async (userData, payload) => {
 };
 
 const getAllReview = async (query) => {
-  const { carId, ...newQuery } = query;
-
+  const { carId, hostId, ...newQuery } = query || {};
   let reviewQuery;
+  const queryObj = {};
   let populateObj = {
     path: "user",
     select: "name profile_image address -_id",
   };
 
+  if (carId) queryObj.car = carId;
+  // if (hostId) queryObj.host = hostId;
+
   if (carId) {
     reviewQuery = new QueryBuilder(
-      Review.find({ car: carId }).populate(populateObj),
+      Review.find(queryObj).populate(populateObj),
       newQuery
     )
       .search([])

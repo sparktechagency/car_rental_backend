@@ -13,6 +13,7 @@ const { updateCarAndNotify } = require("../../../util/updateCarAndNotify");
 const { isValidDate } = require("../../../util/isValidDate");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
 const User = require("../user/user.model");
+const Review = require("../review/review.model");
 
 // update car ===========================
 const addLocation = async (userData, payload) => {
@@ -261,11 +262,8 @@ const sendAddCarReq = async (userData, query) => {
     "transmission",
     "carType",
     "vehicleType",
-    "hostLicenseNumber",
-    "hostFirstName",
-    "hostLastName",
-    "hostLicenseExpiryDate",
-    "hostLicenseDateOfBirth",
+    "hostLicenseFrontImage",
+    "hostLicenseBackImage",
     "pricePerDay",
     "maxTravelDistancePerDay",
     "finePerKm",
@@ -417,7 +415,13 @@ const topHostsInDestination = async ({ destination }) => {
 
   const topHostsWithCar = await User.aggregate([
     {
-      $match: { _id: { $in: await Car.distinct("user", { destination }) } },
+      $match: {
+        _id: {
+          $in: await Car.distinct("user", {
+            destination: { $regex: destination, $options: "i" },
+          }),
+        },
+      },
     },
     {
       $lookup: {
@@ -435,8 +439,85 @@ const topHostsInDestination = async ({ destination }) => {
     },
   ]);
 
+  const host1CarIds = topHostsWithCar[0].cars.map((car) => car._id);
+  const host2CarIds = topHostsWithCar[1].cars.map((car) => car._id);
+
+  const topReviews = await Review.aggregate([
+    {
+      $match: {
+        car: { $in: [...host1CarIds, ...host2CarIds] }, // Match reviews for host1 or host2
+      },
+    },
+    {
+      $sort: {
+        rating: -1, // Sort reviews by rating in descending order
+        createdAt: -1, // If ratings are equal, sort by the newest reviews
+      },
+    },
+    {
+      $group: {
+        _id: "$car", // Group by host (car)
+        reviews: { $push: "$$ROOT" }, // Push all reviews into an array
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        topReviews: { $slice: ["$reviews", 2] }, // Get the top 2 reviews for each host
+      },
+    },
+  ]);
+
+  // console.log(host1, host2);
+
+  // -----------------------------------------
+
+  // const topReviews = await Review.aggregate([
+  //   {
+  //     $match: {
+  //       car: { $in: [...host1CarIds, ...host2CarIds] }, // Match reviews for host1 or host2
+  //     },
+  //   },
+  //   {
+  //     $sort: {
+  //       rating: -1, // Sort reviews by rating in descending order
+  //       createdAt: -1, // If ratings are equal, sort by the newest reviews
+  //     },
+  //   },
+  //   {
+  //     $group: {
+  //       _id: "$car", // Group by car
+  //       reviews: { $push: "$$ROOT" }, // Push all reviews into an array
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: "cars", // Collection name for Car (adjust if it's different)
+  //       localField: "_id", // `_id` is the car ID in the Review schema
+  //       foreignField: "_id", // `_id` is the car ID in the Car schema
+  //       as: "carDetails", // Join results will be stored in `carDetails`
+  //     },
+  //   },
+  //   {
+  //     $unwind: "$carDetails", // Unwind the joined car details
+  //   },
+  //   {
+  //     $project: {
+  //       _id: 0, // Exclude the default `_id` field from the output
+  //       car: "$carDetails._id", // Include the car ID
+  //       host: "$carDetails.user", // Include the host ID (user field in Car model)
+  //       topReviews: { $slice: ["$reviews", 2] }, // Get the top 2 reviews for each car
+  //     },
+  //   },
+  // ]);
+
+  console.log(topReviews);
+
+  console.log(host1CarIds, host2CarIds);
+
   return {
     count: topHostsWithCar.length,
+    topReviews,
     topHostsWithCar,
   };
 };

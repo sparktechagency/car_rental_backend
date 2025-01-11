@@ -1,6 +1,6 @@
 const sendResponse = require("../../../shared/sendResponse");
 const { TripService } = require("./trip.service");
-const catchAsync = require("../../../shared/catchasync");
+const catchAsync = require("../../../shared/catchAsync");
 
 const addTrip = catchAsync(async (req, res) => {
   const result = await TripService.addTrip(req.user, req.body);
