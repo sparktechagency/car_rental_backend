@@ -73,7 +73,8 @@ const addTrip = async (userData, payload) => {
   };
 
   const tripExists = await Trip.findOne({
-    user: userId,
+    // user: userId,
+    car: carId,
     $or: [
       {
         tripStartDateTime: { $lte: tripEndDateTime, $gte: tripStartDateTime },
@@ -103,7 +104,14 @@ const getMyTripOrder = async (userData, query) => {
   const { status: tripStatus = ENUM_TRIP_STATUS.REQUESTED } = query || {};
 
   const trips = await Trip.find({ user: userId, status: tripStatus })
-    .populate("car user")
+    .populate(
+      [
+        { path: "car" },
+        { path: "user" },
+        { path: "host", select: "name profile_image rating trip createdAt" },
+      ]
+      // "car user host"
+    )
     .lean();
 
   if (!trips.length) throw new ApiError(status.NOT_FOUND, "No trips found");
