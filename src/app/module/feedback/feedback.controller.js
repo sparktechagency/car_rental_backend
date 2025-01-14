@@ -1,6 +1,6 @@
 const { FeedbackService } = require("./feedback.service");
 const sendResponse = require("../../../shared/sendResponse");
-const catchAsync = require("../../../shared/catchasync");
+const catchAsync = require("../../../shared/catchAsync");
 
 const postFeedback = catchAsync(async (req, res) => {
   const result = await FeedbackService.postFeedback(req.user, req.body);

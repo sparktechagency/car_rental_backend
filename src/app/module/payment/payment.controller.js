@@ -1,6 +1,6 @@
 const { PaymentService } = require("./payment.service");
 const sendResponse = require("../../../shared/sendResponse");
-const catchAsync = require("../../../shared/catchasync");
+const catchAsync = require("../../../shared/catchAsync");
 const { StripeService } = require("./stripe.service");
 
 const payPage = catchAsync(async (req, res) => {
