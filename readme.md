@@ -1,5 +1,8 @@
 # Car-Rental
 
+nardolimited@gmail.com
+Airbnb123.!
+
 ### requirements
 
 1. how do you want to earn? charge the host 10%
