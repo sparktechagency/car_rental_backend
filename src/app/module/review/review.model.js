@@ -8,6 +8,11 @@ const reviewSchema = new Schema(
       ref: "User",
       required: true,
     },
+    host: {
+      type: ObjectId,
+      ref: "User",
+      required: true,
+    },
     car: {
       type: ObjectId,
       required: true,

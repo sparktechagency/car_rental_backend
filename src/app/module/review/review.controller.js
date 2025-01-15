@@ -1,6 +1,6 @@
 const { ReviewService } = require("./review.service");
 const sendResponse = require("../../../shared/sendResponse");
-const catchAsync = require("../../../shared/catchasync");
+const catchAsync = require("../../../shared/catchAsync");
 
 const postReview = catchAsync(async (req, res) => {
   const result = await ReviewService.postReview(req.user, req.body);

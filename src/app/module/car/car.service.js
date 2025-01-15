@@ -425,7 +425,7 @@ const topHostsInDestination = async ({ destination }) => {
     },
     {
       $lookup: {
-        from: "cars", // Assuming "cars" is the collection name
+        from: "cars",
         localField: "_id",
         foreignField: "user",
         as: "cars",
@@ -439,86 +439,36 @@ const topHostsInDestination = async ({ destination }) => {
     },
   ]);
 
-  const host1CarIds = topHostsWithCar[0].cars.map((car) => car._id);
-  const host2CarIds = topHostsWithCar[1].cars.map((car) => car._id);
+  const host1Id = topHostsWithCar[0]._id;
+  const host2Id = topHostsWithCar[1]._id;
 
   const topReviews = await Review.aggregate([
     {
       $match: {
-        car: { $in: [...host1CarIds, ...host2CarIds] }, // Match reviews for host1 or host2
+        host: { $in: [host1Id, host2Id] },
       },
     },
     {
-      $sort: {
-        rating: -1, // Sort reviews by rating in descending order
-        createdAt: -1, // If ratings are equal, sort by the newest reviews
-      },
+      $sort: { host: 1, rating: -1 },
     },
     {
       $group: {
-        _id: "$car", // Group by host (car)
-        reviews: { $push: "$$ROOT" }, // Push all reviews into an array
+        _id: "$host",
+        topReviews: { $push: "$$ROOT" },
       },
     },
     {
       $project: {
         _id: 1,
-        topReviews: { $slice: ["$reviews", 2] }, // Get the top 2 reviews for each host
+        topReviews: { $slice: ["$topReviews", 2] },
       },
     },
   ]);
 
-  // console.log(host1, host2);
-
-  // -----------------------------------------
-
-  // const topReviews = await Review.aggregate([
-  //   {
-  //     $match: {
-  //       car: { $in: [...host1CarIds, ...host2CarIds] }, // Match reviews for host1 or host2
-  //     },
-  //   },
-  //   {
-  //     $sort: {
-  //       rating: -1, // Sort reviews by rating in descending order
-  //       createdAt: -1, // If ratings are equal, sort by the newest reviews
-  //     },
-  //   },
-  //   {
-  //     $group: {
-  //       _id: "$car", // Group by car
-  //       reviews: { $push: "$$ROOT" }, // Push all reviews into an array
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: "cars", // Collection name for Car (adjust if it's different)
-  //       localField: "_id", // `_id` is the car ID in the Review schema
-  //       foreignField: "_id", // `_id` is the car ID in the Car schema
-  //       as: "carDetails", // Join results will be stored in `carDetails`
-  //     },
-  //   },
-  //   {
-  //     $unwind: "$carDetails", // Unwind the joined car details
-  //   },
-  //   {
-  //     $project: {
-  //       _id: 0, // Exclude the default `_id` field from the output
-  //       car: "$carDetails._id", // Include the car ID
-  //       host: "$carDetails.user", // Include the host ID (user field in Car model)
-  //       topReviews: { $slice: ["$reviews", 2] }, // Get the top 2 reviews for each car
-  //     },
-  //   },
-  // ]);
-
-  console.log(topReviews);
-
-  console.log(host1CarIds, host2CarIds);
+  const topHostsInDestination = mergeById(topHostsWithCar, topReviews);
 
   return {
-    count: topHostsWithCar.length,
-    topReviews,
-    topHostsWithCar,
+    topHostsInDestination,
   };
 };
 
@@ -533,6 +483,27 @@ const deleteCar = async (query) => {
     throw new ApiError(status.NOT_FOUND, "Car not found");
 
   return result;
+};
+
+// ================ utility functions
+
+const mergeById = (arr1, arr2) => {
+  const map = new Map();
+
+  arr1.forEach((item) => {
+    map.set(item._id.toString(), { ...item });
+  });
+
+  arr2.forEach((item) => {
+    const id = item._id.toString();
+    if (map.has(id)) {
+      map.set(id, { ...map.get(id), ...item });
+    } else {
+      map.set(id, { ...item });
+    }
+  });
+
+  return Array.from(map.values());
 };
 
 const CarService = {

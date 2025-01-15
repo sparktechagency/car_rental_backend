@@ -1,6 +1,6 @@
 const sendResponse = require("../../../shared/sendResponse");
 const { CarService } = require("./car.service");
-const catchAsync = require("../../../shared/catchasync");
+const catchAsync = require("../../../shared/catchAsync");
 
 const addLocation = catchAsync(async (req, res) => {
   const result = await CarService.addLocation(req.user, req.body);

@@ -1,5 +1,8 @@
 # Car-Rental
 
+nardolimited@gmail.com
+Airbnb123.!
+
 ### requirements
 
 1. how do you want to earn? charge the host 10%
@@ -16,15 +19,9 @@
 4. what about deposit and refund?
 5. secure payment routes
 6. put only approved cars on main search
-<<<<<<< HEAD
 7. fix payment
-=======
-7. email notification on booking request
-8. fee 12.5%
-9. young driver fee and a cleaning fee dynamic
-10. expanding the map
->>>>>>> 2aba3eeaee7c20056ab6386d89769129f24e28bf
 
+stripe listen --forward-to http://10.0.60.26:8056/stripe/webhook
 tips and tricks
 trust and safety
 host guidelines
