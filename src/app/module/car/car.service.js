@@ -320,9 +320,7 @@ const getSingleCar = async (query) => {
 const getMyCar = async (userData) => {
   const { userId } = userData;
 
-  const cars = await Car.find({ host: userId }).lean();
-
-  if (!cars.length) throw new ApiError(status.NOT_FOUND, "Cars not found");
+  const cars = await Car.find({ user: userId }).lean();
 
   return cars;
 };

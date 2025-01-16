@@ -17,6 +17,7 @@
 5. secure payment routes
 6. put only approved cars on main search
 7. fix payment
+8. send email after user becomes host. tell him to login
 
 stripe listen --forward-to http://10.0.60.26:8056/stripe/webhook
 tips and tricks

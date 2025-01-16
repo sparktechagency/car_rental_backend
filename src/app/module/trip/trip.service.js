@@ -2,7 +2,7 @@ const { status } = require("http-status");
 
 const ApiError = require("../../../error/ApiError");
 const Trip = require("../trip/trip.model");
-const { ENUM_TRIP_STATUS } = require("../../../util/enum");
+const { ENUM_TRIP_STATUS, ENUM_USER_ROLE } = require("../../../util/enum");
 const QueryBuilder = require("../../../builder/queryBuilder");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
 const postNotification = require("../../../util/postNotification");
@@ -103,23 +103,35 @@ const getMyTripOrder = async (userData, query) => {
   const { userId } = userData;
   const { status: tripStatus = ENUM_TRIP_STATUS.REQUESTED } = query || {};
 
-  const trips = await Trip.find({ user: userId, status: tripStatus })
-    .populate(
-      [
+  if (userData.role === ENUM_USER_ROLE.USER) {
+    const trips = await Trip.find({ user: userId, status: tripStatus })
+      .populate([
         { path: "car" },
         { path: "user" },
         { path: "host", select: "name profile_image rating trip createdAt" },
-      ]
-      // "car user host"
-    )
-    .lean();
+      ])
+      .lean();
 
-  if (!trips.length) throw new ApiError(status.NOT_FOUND, "No trips found");
+    return {
+      count: trips.length,
+      trips,
+    };
+  }
 
-  return {
-    count: trips.length,
-    trips,
-  };
+  if (userData.role === ENUM_USER_ROLE.HOST) {
+    const trips = await Trip.find({ host: userId, status: tripStatus })
+      .populate([
+        { path: "car" },
+        { path: "user" },
+        { path: "host", select: "name profile_image rating trip createdAt" },
+      ])
+      .lean();
+
+    return {
+      count: trips.length,
+      trips,
+    };
+  }
 };
 
 const getSingleTrip = async (query) => {
