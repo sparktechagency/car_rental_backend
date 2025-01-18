@@ -408,6 +408,36 @@ const getAllCar = async (query) => {
   };
 };
 
+const getDistinctMakeModelYear = async (query) => {
+  const result = await Car.aggregate([
+    {
+      $facet: {
+        make: [
+          { $group: { _id: "$make" } },
+          { $project: { _id: 0, value: "$_id" } },
+        ],
+        model: [
+          { $group: { _id: "$model" } },
+          { $project: { _id: 0, value: "$_id" } },
+        ],
+        year: [
+          { $group: { _id: "$year" } },
+          { $project: { _id: 0, value: "$_id" } },
+        ],
+      },
+    },
+    {
+      $project: {
+        make: { $map: { input: "$make", as: "item", in: "$$item.value" } },
+        model: { $map: { input: "$model", as: "item", in: "$$item.value" } },
+        year: { $map: { input: "$year", as: "item", in: "$$item.value" } },
+      },
+    },
+  ]);
+
+  return result;
+};
+
 const topHostsInDestination = async ({ destination }) => {
   validateFields({ destination }, ["destination"]);
 
@@ -518,6 +548,7 @@ const CarService = {
   getSingleCar,
   getMyCar,
   getAllCar,
+  getDistinctMakeModelYear,
   topHostsInDestination,
   deleteCar,
 };

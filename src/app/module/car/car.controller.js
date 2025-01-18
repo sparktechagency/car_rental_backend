@@ -132,6 +132,16 @@ const getAllCar = catchAsync(async (req, res) => {
   });
 });
 
+const getDistinctMakeModelYear = catchAsync(async (req, res) => {
+  const result = await CarService.getDistinctMakeModelYear(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Make model and year retrieved successfully",
+    data: result,
+  });
+});
+
 const topHostsInDestination = catchAsync(async (req, res) => {
   const result = await CarService.topHostsInDestination(req.query);
   sendResponse(res, {
@@ -166,6 +176,7 @@ const CarController = {
   getSingleCar,
   getMyCar,
   getAllCar,
+  getDistinctMakeModelYear,
   topHostsInDestination,
   deleteCar,
 };
