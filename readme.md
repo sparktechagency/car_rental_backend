@@ -18,6 +18,8 @@
 6. put only approved cars on main search
 7. fix payment
 8. send email after user becomes host. tell him to login
+9. connect stripe with clients stripe
+10. test the transfer
 
 stripe listen --forward-to http://10.0.60.26:8056/stripe/webhook
 tips and tricks
