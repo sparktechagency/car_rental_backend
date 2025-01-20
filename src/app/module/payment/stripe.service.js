@@ -37,7 +37,7 @@ const createCheckout = async (userData, payload) => {
         line_items: [
           {
             price_data: {
-              currency: "usd",
+              currency: "gbp",
               product_data: {
                 name: "Trip Cost",
               },
@@ -123,9 +123,10 @@ const updateHostPaymentDetails = async (req) => {
     last_name,
     phone,
     bank_account_no,
-    routing_no,
     dateOfBirth,
-    ssn_last_4,
+    line1,
+    city,
+    postal_code,
   } = payload || {};
 
   validateFields(payload, [
@@ -133,10 +134,11 @@ const updateHostPaymentDetails = async (req) => {
     "first_name",
     "last_name",
     "phone",
-    "bank_account_no",
-    "routing_no",
     "dateOfBirth",
-    "ssn_last_4",
+    "line1",
+    "city",
+    "postal_code",
+    "bank_account_no",
   ]);
 
   dateTimeValidator(dateOfBirth);
@@ -149,31 +151,43 @@ const updateHostPaymentDetails = async (req) => {
 
   const stripeAccountData = {
     type: "custom",
-    country: "US",
+    country: "GB",
     email,
     business_profile: {
+      mcc: "5734",
       url,
     },
     business_type: "individual",
     individual: {
       first_name,
       last_name,
+      email,
       phone,
       dob: {
-        day: day,
-        month: month,
-        year: year,
+        day,
+        month,
+        year,
       },
-      ssn_last_4,
+      address: {
+        line1,
+        city,
+        postal_code,
+        country: "GB",
+      },
     },
     external_account: {
       object: "bank_account",
       account_number: bank_account_no,
-      routing_number: routing_no,
-      country: "US",
+      country: "GB",
+      currency: "gbp",
     },
     capabilities: {
-      transfers: { requested: true },
+      card_payments: {
+        requested: true,
+      },
+      transfers: {
+        requested: true,
+      },
     },
     tos_acceptance: {
       date: Math.floor(Date.now() / 1000),
@@ -182,12 +196,11 @@ const updateHostPaymentDetails = async (req) => {
   };
 
   const account = await stripe.accounts.create(stripeAccountData);
-
+  console.log(account);
   const payoutData = {
     host: userId,
     stripe_account_id: account.id,
     bank_account_no,
-    routing_no,
   };
 
   const newPayoutInfo = await PayoutInfo.create(payoutData);
@@ -216,23 +229,25 @@ const transferPayment = async (payload) => {
   const hostPayoutInfo = await PayoutInfo.findOne({ host: payment.host });
   if (!hostPayoutInfo)
     throw new ApiError(status.NOT_FOUND, "Host payout info does not exist");
+  const { stripe_account_id } = hostPayoutInfo;
 
   const transferObj = {
-    // amount: Math.ceil(payment.amount * 100 * 0.9),
-    amount: Math.ceil(20 * 100 * 0.9),
-    currency: "usd",
-    // destination: hostPayoutInfo.stripe_account_id,
-    destination: "acct_1QOI4tBA1SkqjBUj",
+    amount: Math.ceil(payment.amount * 100 * 0.9),
+    currency: "gbp",
+    destination: stripe_account_id,
+    // amount: Math.ceil(20 * 100 * 0.9),
+    // currency: "usd",
+    // destination: "acct_1QOI4tBA1SkqjBUj",
   };
 
   const transfer = await stripe.transfers.create(transferObj);
 
   const [payouts, accountBalance] = await Promise.all([
     stripe.payouts.list({
-      stripeAccount: "acct_1QOHaqB7N4lZtOmr",
+      stripeAccount: stripe_account_id,
     }),
     stripe.balance.retrieve({
-      stripeAccount: "acct_1QOHaqB7N4lZtOmr",
+      stripeAccount: stripe_account_id,
     }),
   ]);
 

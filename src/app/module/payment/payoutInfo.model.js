@@ -16,10 +16,6 @@ const payoutInfoSchema = new Schema(
       type: String,
       required: true,
     },
-    routing_no: {
-      type: String,
-      required: true,
-    },
   },
   {
     timestamps: true,
