@@ -22,6 +22,7 @@
 10. test the transfer
 11. Modify the email templates
 12. send email on car booking
+13. edit the email template with the Nardo logo on registration
 
 stripe listen --forward-to http://10.0.60.26:8056/stripe/webhook
 tips and tricks
