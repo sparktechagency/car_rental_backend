@@ -24,6 +24,12 @@
 12. send email on car booking
 13. edit the email template with the Nardo logo on registration
 
+# frontend check
+
+1. check the images
+2. map zoom
+3. first time card add functionality and edge cases
+
 stripe listen --forward-to http://10.0.60.26:8056/stripe/webhook
 tips and tricks
 trust and safety
