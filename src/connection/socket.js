@@ -8,7 +8,10 @@ const server = http.createServer(app);
 let io;
 
 io = new Server(server, {
-  cors: true,
+  cors: {
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+  },
 });
 
 io.on(ENUM_SOCKET_EVENT.CONNECTION, async (socket) => {

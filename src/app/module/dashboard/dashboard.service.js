@@ -378,7 +378,10 @@ const getAllUser = async (query) => {
     throw new ApiError(status.BAD_REQUEST, "Invalid role");
 
   const usersQuery = new QueryBuilder(
-    User.find().populate({ path: "authId", select: "isBlocked" }).lean(),
+    User.find()
+      .populate({ path: "authId", select: "isBlocked" })
+      .sort({ createdAt: -1 })
+      .lean(),
     query
   )
     .search(["name", "email"])
@@ -404,7 +407,7 @@ const getSingleUser = async (query) => {
 
   if (role === ENUM_USER_ROLE.HOST) {
     const [cars, user] = await Promise.all([
-      Car.find({ user: userId }),
+      Car.find({ user: userId }).sort({ createdAt: -1 }),
       User.findById(userId),
     ]);
 
