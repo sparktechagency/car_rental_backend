@@ -110,6 +110,7 @@ const getMyTripOrder = async (userData, query) => {
         { path: "user" },
         { path: "host", select: "name profile_image rating trip createdAt" },
       ])
+      .sort({ createdAt: -1 })
       .lean();
 
     return {
@@ -125,6 +126,7 @@ const getMyTripOrder = async (userData, query) => {
         { path: "user" },
         { path: "host", select: "name profile_image rating trip createdAt" },
       ])
+      .sort({ createdAt: -1 })
       .lean();
 
     return {

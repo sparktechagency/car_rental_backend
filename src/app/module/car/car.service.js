@@ -301,7 +301,7 @@ const sendAddCarReq = async (userData, query) => {
 };
 
 const getAllBrands = async () => {
-  const brands = await Car.find({}).select("-_id make");
+  const brands = await Car.find({}).sort({ createdAt: -1 }).select("-_id make");
   return brands;
 };
 
@@ -320,7 +320,7 @@ const getSingleCar = async (query) => {
 const getMyCar = async (userData) => {
   const { userId } = userData;
 
-  const cars = await Car.find({ user: userId }).lean();
+  const cars = await Car.find({ user: userId }).sort({ createdAt: -1 }).lean();
 
   return cars;
 };
