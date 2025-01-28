@@ -17,7 +17,7 @@ const getChatMessages = async (payload) => {
     .populate({
       path: "messages",
       select: "sender receiver message createdAt",
-      options: { sort: { createdAt: -1 } },
+      options: { sort: { createdAt: 1 } },
     })
     .lean();
 
