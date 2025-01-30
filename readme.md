@@ -3,10 +3,7 @@
 ### requirements
 
 1. how do you want to earn? charge the host 10%
-2. what about the deposit?
-3. the max radius problem? unlimited around UK
-
-4. video system
+2. the max radius problem? unlimited around UK
 
 ### To do
 
@@ -29,11 +26,6 @@
 1. check the images
 2. map zoom
 3. first time card add functionality and edge cases
-
-stripe listen --forward-to http://10.0.60.26:8056/stripe/webhook
-tips and tricks
-trust and safety
-host guidelines
 
 # gpt cmd
 

@@ -14,6 +14,7 @@ const { isValidDate } = require("../../../util/isValidDate");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
 const User = require("../user/user.model");
 const Review = require("../review/review.model");
+const Favorite = require("../favorite/favorite.model");
 
 // update car ===========================
 const addLocation = async (userData, payload) => {
@@ -397,14 +398,21 @@ const getAllCar = async (query) => {
     };
   }
 
-  const availableCars = await Car.find(searchFilters)
-    .sort("-rating")
-    .collation({ locale: "en", strength: 2 })
-    .lean();
+  const [userFavorites, availableCars] = await Promise.all([
+    Favorite.find(),
+    Car.find(searchFilters)
+      .sort("-rating")
+      .collation({ locale: "en", strength: 2 }),
+  ]);
+
+  const availableCarsWithFavorite = getCarsWithFavorite(
+    availableCars,
+    userFavorites
+  );
 
   return {
     count: availableCars.length,
-    availableCars,
+    availableCars: availableCarsWithFavorite,
   };
 };
 
@@ -413,24 +421,69 @@ const getDistinctMakeModelYear = async (query) => {
     {
       $facet: {
         make: [
-          { $group: { _id: "$make" } },
-          { $project: { _id: 0, value: "$_id" } },
+          {
+            $group: {
+              _id: "$make",
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              value: "$_id",
+            },
+          },
         ],
         model: [
-          { $group: { _id: "$model" } },
-          { $project: { _id: 0, value: "$_id" } },
+          {
+            $group: {
+              _id: "$model",
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              value: "$_id",
+            },
+          },
         ],
         year: [
-          { $group: { _id: "$year" } },
-          { $project: { _id: 0, value: "$_id" } },
+          {
+            $group: {
+              _id: "$year",
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              value: "$_id",
+            },
+          },
         ],
       },
     },
     {
       $project: {
-        make: { $map: { input: "$make", as: "item", in: "$$item.value" } },
-        model: { $map: { input: "$model", as: "item", in: "$$item.value" } },
-        year: { $map: { input: "$year", as: "item", in: "$$item.value" } },
+        make: {
+          $map: {
+            input: "$make",
+            as: "item",
+            in: "$$item.value",
+          },
+        },
+        model: {
+          $map: {
+            input: "$model",
+            as: "item",
+            in: "$$item.value",
+          },
+        },
+        year: {
+          $map: {
+            input: "$year",
+            as: "item",
+            in: "$$item.value",
+          },
+        },
       },
     },
   ]);
@@ -578,6 +631,21 @@ const mergeById = (arr1, arr2) => {
   });
 
   return Array.from(map.values());
+};
+
+const getCarsWithFavorite = (cars, userFavorites) => {
+  const favoriteCarIds = new Set(
+    userFavorites.map((fav) => fav.car.toString())
+  );
+
+  const carsWithFavorite = cars.map((car) => {
+    return {
+      ...car.toObject(),
+      isLiked: favoriteCarIds.has(car._id.toString()),
+    };
+  });
+
+  return carsWithFavorite;
 };
 
 const CarService = {
