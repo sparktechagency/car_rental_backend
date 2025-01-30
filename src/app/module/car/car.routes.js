@@ -60,6 +60,16 @@ router
   .get("/get-all-car", CarController.getAllCar)
   .get("/get-make-model-year", CarController.getDistinctMakeModelYear)
   .get("/top-hosts-in-destination", CarController.topHostsInDestination)
-  .delete("/delete-car", auth(ENUM_USER_ROLE.ADMIN), CarController.deleteCar);
+  .delete("/delete-car", auth(ENUM_USER_ROLE.ADMIN), CarController.deleteCar)
+  .get(
+    "/get-make-from-api",
+    // auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    CarController.getMakeFromAPI
+  )
+  .get(
+    "/get-model-from-api",
+    // auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    CarController.getModelFromAPI
+  );
 
 module.exports = router;

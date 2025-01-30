@@ -12,6 +12,7 @@ const { logger } = require("../../../shared/logger");
 const User = require("../user/user.model");
 const PayoutInfo = require("./payoutInfo.model");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
+const Trip = require("../trip/trip.model");
 
 const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
@@ -20,15 +21,17 @@ const cliEndPointSecret = config.stripe.stripe_cli_webhook_secret;
 
 const createCheckout = async (userData, payload) => {
   const { userId } = userData || {};
-  const { carId, amount } = payload || {};
+  const { carId, tripId, amount } = payload || {};
   let session = {};
   let car = {};
+  let trip = {};
 
-  validateFields(payload, ["carId", "amount"]);
+  validateFields(payload, ["carId", "tripId", "amount"]);
 
   try {
-    [car, session] = await Promise.all([
+    [car, trip, session] = await Promise.all([
       Car.findById(carId),
+      Trip.findById(tripId),
       stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
@@ -53,12 +56,14 @@ const createCheckout = async (userData, payload) => {
   }
 
   if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
+  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
 
   const { id: checkout_session_id, url } = session || {};
   const paymentData = {
     user: userId,
     car: carId,
     host: car.user,
+    trip: tripId,
     amount,
     checkout_session_id,
   };
@@ -276,7 +281,7 @@ const updatePaymentToDB = async (eventData) => {
 
   const charge = await stripe.charges.retrieve(paymentIntent.latest_charge);
 
-  await Payment.findOneAndUpdate(
+  const updatedPayment = await Payment.findOneAndUpdate(
     { checkout_session_id: id },
     {
       $set: {
@@ -285,7 +290,12 @@ const updatePaymentToDB = async (eventData) => {
         receipt_url: charge.receipt_url,
       },
     },
-    { new: true }
+    { new: true, runValidators: true }
+  );
+  const updatedTrip = await Trip.findOneAndUpdate(
+    { _id: updatedPayment.trip },
+    { $set: { isPaid: true } },
+    { new: true, runValidators: true }
   );
 };
 

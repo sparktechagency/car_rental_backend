@@ -513,6 +513,52 @@ const deleteCar = async (query) => {
   return result;
 };
 
+const getMakeFromAPI = async (query) => {
+  validateFields(query, ["year"]);
+
+  const { year } = query;
+  let res;
+
+  try {
+    res = await axios.get(
+      `https://www.carqueryapi.com/api/0.3/?cmd=getMakes&year=${year}`
+    );
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(
+      Number(error.response.data.errors[0].status),
+      error.response.data.errors[0].detail
+    );
+  }
+
+  return {
+    res: res.data,
+  };
+};
+
+const getModelFromAPI = async (query) => {
+  validateFields(query, ["year", "make"]);
+
+  const { year, make } = query;
+  let res;
+
+  try {
+    res = await axios.get(
+      `https://www.carqueryapi.com/api/0.3/?&cmd=getModels&make=${make}&year=${year}`
+    );
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(
+      Number(error.response.data.errors[0].status),
+      error.response.data.errors[0].detail
+    );
+  }
+
+  return {
+    res: res.data,
+  };
+};
+
 // ================ utility functions
 
 const mergeById = (arr1, arr2) => {
@@ -551,6 +597,8 @@ const CarService = {
   getDistinctMakeModelYear,
   topHostsInDestination,
   deleteCar,
+  getMakeFromAPI,
+  getModelFromAPI,
 };
 
 module.exports = { CarService };

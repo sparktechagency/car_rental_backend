@@ -162,6 +162,28 @@ const deleteCar = catchAsync(async (req, res) => {
   });
 });
 
+const getMakeFromAPI = catchAsync(async (req, res) => {
+  const result = await CarService.getMakeFromAPI(req.query);
+  res.json({ result });
+  // sendResponse(res, {
+  //   statusCode: 200,
+  //   success: true,
+  //   message: "Data retrieved",
+  //   data: result,
+  // });
+});
+
+const getModelFromAPI = catchAsync(async (req, res) => {
+  const result = await CarService.getModelFromAPI(req.query);
+  res.json({ result });
+  // sendResponse(res, {
+  //   statusCode: 200,
+  //   success: true,
+  //   message: "Data retrieved",
+  //   data: result,
+  // });
+});
+
 const CarController = {
   addLocation,
   updateCarLicense,
@@ -179,6 +201,8 @@ const CarController = {
   getDistinctMakeModelYear,
   topHostsInDestination,
   deleteCar,
+  getMakeFromAPI,
+  getModelFromAPI,
 };
 
 module.exports = { CarController };

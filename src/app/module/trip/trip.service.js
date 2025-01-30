@@ -1,4 +1,5 @@
 const { status } = require("http-status");
+const cron = require("node-cron");
 
 const ApiError = require("../../../error/ApiError");
 const Trip = require("../trip/trip.model");
@@ -10,6 +11,7 @@ const validateFields = require("../../../util/validateFields");
 const { isValidDate } = require("../../../util/isValidDate");
 const User = require("../user/user.model");
 const Car = require("../car/car.model");
+const { logger } = require("../../../shared/logger");
 
 const addTrip = async (userData, payload) => {
   const { userId } = userData;
@@ -73,7 +75,7 @@ const addTrip = async (userData, payload) => {
   };
 
   const tripExists = await Trip.findOne({
-    // user: userId,
+    user: userId,
     car: carId,
     $or: [
       {
@@ -92,7 +94,7 @@ const addTrip = async (userData, payload) => {
   if (tripExists)
     throw new ApiError(
       status.CONFLICT,
-      "Trip exists. Select different date & time"
+      "Trip exists. Select different date & time or car"
     );
 
   const result = await Trip.create(tripData);
@@ -241,6 +243,19 @@ const updateTripStatus = async (payload) => {
 
   return updatedTrip;
 };
+
+// delete unpaid trips
+cron.schedule("*/4 * * * *", async () => {
+  try {
+    const result = await Trip.deleteMany({ isPaid: false });
+
+    if (result.deletedCount > 0) {
+      logger.info(`Removed ${result.deletedCount} unpaid trips`);
+    }
+  } catch (error) {
+    logger.error("Error removing unpaid trips:", error);
+  }
+});
 
 const TripService = {
   addTrip,
