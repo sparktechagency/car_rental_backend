@@ -18,6 +18,11 @@ const paymentSchema = new Schema(
       ref: "User",
       required: true,
     },
+    trip: {
+      type: ObjectId,
+      ref: "Trip",
+      required: true,
+    },
     amount: {
       type: Number,
       required: true,

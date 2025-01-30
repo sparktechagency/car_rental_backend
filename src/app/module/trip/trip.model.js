@@ -65,6 +65,10 @@ const tripSchema = new Schema(
       enum: ["requested", "canceled", "ongoing", "completed"],
       default: "requested",
     },
+    isPaid: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
