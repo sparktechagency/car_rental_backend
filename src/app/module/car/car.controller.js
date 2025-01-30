@@ -103,7 +103,7 @@ const getAllBrands = catchAsync(async (req, res) => {
 });
 
 const getSingleCar = catchAsync(async (req, res) => {
-  const result = await CarService.getSingleCar(req.query);
+  const result = await CarService.getSingleCar(req.user, req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -123,7 +123,7 @@ const getMyCar = catchAsync(async (req, res) => {
 });
 
 const getAllCar = catchAsync(async (req, res) => {
-  const result = await CarService.getAllCar(req.query);
+  const result = await CarService.getAllCar(req.user, req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,

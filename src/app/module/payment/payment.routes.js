@@ -3,6 +3,7 @@ const auth = require("../../middleware/auth");
 const { ENUM_USER_ROLE } = require("../../../util/enum");
 const { PaymentController } = require("./payment.controller");
 const { uploadFile } = require("../../middleware/fileUploader");
+const config = require("../../../config");
 
 const router = express.Router();
 
@@ -12,39 +13,43 @@ router
   .get("/cancel", PaymentController.cancelPage)
   .get(
     "/get-all-payment",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     PaymentController.getAllPayment
   )
   .post(
     "/checkout",
-    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.user),
     PaymentController.createCheckout
   )
-  .patch("/refund", auth(ENUM_USER_ROLE.ADMIN), PaymentController.refundPayment)
+  .patch(
+    "/refund",
+    auth(config.auth_level.admin),
+    PaymentController.refundPayment
+  )
   .get(
     "/host-revenue-chart",
-    auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.host),
     PaymentController.hostRevenueChart
   )
   .get(
     "/host-income-details",
-    auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.host),
     PaymentController.hostIncomeDetails
   )
   .post(
     "/update-host-payment-details",
-    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.user),
     uploadFile(),
     PaymentController.updateHostPaymentDetails
   )
   .get(
     "/get-payout-info",
-    auth(ENUM_USER_ROLE.HOST, ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.user),
     PaymentController.getPayoutInfo
   )
   .patch(
     "/transfer-payment",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.user),
     PaymentController.transferPayment
   );
 

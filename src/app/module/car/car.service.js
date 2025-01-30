@@ -306,12 +306,24 @@ const getAllBrands = async () => {
   return brands;
 };
 
-const getSingleCar = async (query) => {
+const getSingleCar = async (userData, query) => {
   const { carId } = query;
 
   validateFields(query, ["carId"]);
 
-  const car = await Car.findById(carId).populate("user").lean();
+  const car = await Car.findById(carId).populate("user");
+
+  if (userData) {
+    const favorite = await Favorite.findOne({
+      car: carId,
+      user: userData.userId,
+    }).select("user car");
+
+    return {
+      ...car.toObject(),
+      isFavorite: car._id.toString() === favorite.car.toString() ? true : false,
+    };
+  }
 
   if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
 
@@ -327,7 +339,7 @@ const getMyCar = async (userData) => {
 };
 
 // main search ===========================
-const getAllCar = async (query) => {
+const getAllCar = async (userData, query) => {
   const {
     latitude,
     longitude,
@@ -398,21 +410,27 @@ const getAllCar = async (query) => {
     };
   }
 
-  const [userFavorites, availableCars] = await Promise.all([
-    Favorite.find(),
-    Car.find(searchFilters)
-      .sort("-rating")
-      .collation({ locale: "en", strength: 2 }),
-  ]);
+  const availableCars = await Car.find(searchFilters)
+    .sort("-rating")
+    .collation({ locale: "en", strength: 2 });
 
-  const availableCarsWithFavorite = getCarsWithFavorite(
-    availableCars,
-    userFavorites
-  );
+  if (userData) {
+    const userFavorites = await Favorite.find({ user: userData.userId });
+
+    const availableCarsWithFavorite = getCarsWithFavorite(
+      availableCars,
+      userFavorites
+    );
+
+    return {
+      count: availableCars.length,
+      availableCars: availableCarsWithFavorite,
+    };
+  }
 
   return {
     count: availableCars.length,
-    availableCars: availableCarsWithFavorite,
+    availableCars,
   };
 };
 

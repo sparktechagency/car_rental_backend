@@ -239,21 +239,19 @@ const transferPayment = async (payload) => {
     amount: Math.ceil(payment.amount * 100 * 0.9),
     currency: "gbp",
     destination: stripe_account_id,
-    // amount: Math.ceil(20 * 100 * 0.9),
-    // currency: "usd",
     // destination: "acct_1QmqpJBTUgJeIlmw",
   };
 
   const transfer = await stripe.transfers.create(transferObj);
 
-  const [payouts, accountBalance] = await Promise.all([
-    stripe.payouts.list({
-      stripeAccount: stripe_account_id,
-    }),
-    stripe.balance.retrieve({
-      stripeAccount: stripe_account_id,
-    }),
-  ]);
+  // const [payouts, accountBalance] = await Promise.all([
+  //   stripe.payouts.list({
+  //     stripeAccount: stripe_account_id,
+  //   }),
+  //   stripe.balance.retrieve({
+  //     stripeAccount: stripe_account_id,
+  //   }),
+  // ]);
 
   // console.log(payouts, accountBalance);
 

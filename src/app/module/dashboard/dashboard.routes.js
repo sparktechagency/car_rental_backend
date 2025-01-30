@@ -3,6 +3,7 @@ const express = require("express");
 const { ENUM_USER_ROLE } = require("../../../util/enum");
 const DashboardController = require("./dashboard.controller");
 const { uploadFile } = require("../../middleware/fileUploader");
+const config = require("../../../config");
 
 const router = express.Router();
 
@@ -11,52 +12,52 @@ router
   // car ===============================
   .get(
     "/get-all-add-car-req",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     DashboardController.getAllAddCarReq
   )
   .patch(
     "/approve-car",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     DashboardController.approveCar
   )
 
   // destination ========================
   .post(
     "/add-destination",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     uploadFile(),
     DashboardController.addDestination
   )
   .get("/get-all-destination", DashboardController.getAllDestination)
   .delete(
     "/delete-destination",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     DashboardController.deleteDestination
   )
 
   // overview ========================
   .get(
     "/total-overview",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     DashboardController.totalOverview
   )
-  .get("/revenue", auth(ENUM_USER_ROLE.ADMIN), DashboardController.revenue)
-  .get("/growth", auth(ENUM_USER_ROLE.ADMIN), DashboardController.growth)
+  .get("/revenue", auth(config.auth_level.admin), DashboardController.revenue)
+  .get("/growth", auth(config.auth_level.admin), DashboardController.growth)
 
   // user-host management ========================
   .get(
     "/get-all-user",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     DashboardController.getAllUser
   )
   .get(
     "/get-user-details",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     DashboardController.getSingleUser
   )
   .patch(
     "/block-unblock-user",
-    auth(ENUM_USER_ROLE.ADMIN),
+    auth(config.auth_level.admin),
     DashboardController.blockUnblockUser
   );
 
