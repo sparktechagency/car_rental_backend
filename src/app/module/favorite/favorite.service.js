@@ -38,7 +38,10 @@ const addRemoveFavorite = async (userData, query) => {
 const getMyFavorite = async (userData, query) => {
   const { userId } = userData;
 
-  const favoriteQuery = new QueryBuilder(Favorite.find({ user: userId }), query)
+  const favoriteQuery = new QueryBuilder(
+    Favorite.find({ user: userId }).populate([{ path: "car" }]),
+    query
+  )
     .search([])
     .filter()
     .sort()

@@ -2,18 +2,19 @@ const express = require("express");
 const auth = require("../../middleware/auth");
 const { ENUM_USER_ROLE } = require("../../../util/enum");
 const NotificationController = require("./notification.controller");
+const config = require("../../../config");
 
 const router = express.Router();
 
 router
   .get(
     "/get-all-notification",
-    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
+    auth(config.auth_level.user),
     NotificationController.getAllNotifications
   )
   .patch(
     "/mark-as-read",
-    auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.HOST),
+    auth(config.auth_level.user),
     NotificationController.markAsRead
   );
 

@@ -20,6 +20,12 @@ const config = {
   base_url: process.env.BASE_URL,
   database_url: process.env.MONGO_URL,
   database_password: process.env.DB_PASSWORD,
+  auth_level: {
+    user: ["USER", "HOST", "ADMIN", "SUPER_ADMIN"],
+    host: ["HOST", "ADMIN", "SUPER_ADMIN"],
+    admin: ["ADMIN", "SUPER_ADMIN"],
+    super_admin: ["SUPER_ADMIN"],
+  },
   jwt: {
     secret: process.env.JWT_SECRET,
     refresh_secret: process.env.JWT_REFRESH_SECRET,
@@ -50,7 +56,7 @@ const config = {
     stripe_cli_webhook_secret: process.env.STRIPE_CLI_WEBHOOK_SECRET,
   },
   dvla: {
-    x_api_key: process.env.DVLA_X_API_KEY,  
+    x_api_key: process.env.DVLA_X_API_KEY,
   },
 };
 
