@@ -300,6 +300,7 @@ const updatePaymentRefundToDB = async (refundData) => {
   await Payment.updateOne(
     { payment_intent_id: refundData.payment_intent_id },
     {
+      status: ENUM_PAYMENT_STATUS.REFUNDED,
       $inc: { refund_amount: Number(refundData.amount) },
     },
     { timestamps: true }
