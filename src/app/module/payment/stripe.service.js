@@ -187,9 +187,6 @@ const updateHostPaymentDetails = async (req) => {
       currency: "gbp",
     },
     capabilities: {
-      card_payments: {
-        requested: true,
-      },
       transfers: {
         requested: true,
       },
@@ -197,6 +194,7 @@ const updateHostPaymentDetails = async (req) => {
     tos_acceptance: {
       date: Math.floor(Date.now() / 1000),
       ip: `${clientIp}`,
+      service_agreement: "recipient",
     },
   };
 
@@ -235,6 +233,7 @@ const transferPayment = async (payload) => {
   if (!hostPayoutInfo)
     throw new ApiError(status.NOT_FOUND, "Host payout info does not exist");
   const { stripe_account_id } = hostPayoutInfo;
+  console.log(stripe_account_id);
 
   const transferObj = {
     amount: Math.ceil(payment.amount * 100 * 0.9),
@@ -242,7 +241,7 @@ const transferPayment = async (payload) => {
     destination: stripe_account_id,
     // amount: Math.ceil(20 * 100 * 0.9),
     // currency: "usd",
-    // destination: "acct_1QOI4tBA1SkqjBUj",
+    // destination: "acct_1QmqpJBTUgJeIlmw",
   };
 
   const transfer = await stripe.transfers.create(transferObj);
@@ -256,7 +255,7 @@ const transferPayment = async (payload) => {
     }),
   ]);
 
-  console.log(payouts, accountBalance);
+  // console.log(payouts, accountBalance);
 
   Promise.all([
     Payment.updateOne(

@@ -9,7 +9,9 @@ const { default: mongoose } = require("mongoose");
 
 const getAllPayment = async (query) => {
   const paymentQuery = new QueryBuilder(
-    Payment.find({}).populate("user host car"),
+    Payment.find({ status: { $ne: ENUM_PAYMENT_STATUS.UNPAID } }).populate(
+      "user host car"
+    ),
     query
   )
     .search(["checkout_session_id", "payment_intent_id"])
