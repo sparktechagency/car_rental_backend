@@ -149,7 +149,7 @@ const updateHostPaymentDetails = async (req) => {
   dateTimeValidator(dateOfBirth);
   const [day, month, year] = dateOfBirth.split("/");
 
-  const payoutInfo = await getPayoutInfo(userData);
+  const payoutInfo = await PayoutInfo.findOne({ host: userId });
 
   if (payoutInfo)
     return { message: "Payout info already exists", data: payoutInfo };
