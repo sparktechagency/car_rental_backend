@@ -8,36 +8,14 @@ const globalErrorHandler = require("./app/middleware/globalErrorHandler");
 const routes = require("./app/routes");
 const webhookRoutes = require("./app/module/payment/webhook.routes");
 const NotFoundHandler = require("./error/NotFoundHandler");
+const corsOptions = require("./helper/corsOptions");
 
 const app = express();
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(
-  cors({
-    origin: [
-      "http://192.168.12.90:3000",
-      "http://192.168.12.90:3001",
-      "http://192.168.12.90:3002",
-      "http://192.168.12.90:3003",
-      "http://192.168.12.90:3004",
-      "http://192.168.12.90:3005",
-      "http://192.168.12.97:3002",
-      "http://10.0.60.43:3000",
-      "http://10.0.60.43:3001",
-      "http://10.0.60.43:3002",
-      "http://10.0.60.43:3003",
-      "http://10.0.60.43:3004",
-      "http://10.0.60.43:3005",
-      "http://localhost:3000",
-      "http://10.0.60.44:3002",
-      "http://localhost:3001",
-      "http://10.0.60.44:3003",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use("/stripe/webhook", webhookRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
