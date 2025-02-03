@@ -16,6 +16,10 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    age: {
+      type: Number,
+      required: true,
+    },
     role: {
       type: String,
       enum: ["USER", "HOST"],
