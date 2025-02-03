@@ -147,7 +147,7 @@ const updateHostPaymentDetails = async (req) => {
   ]);
 
   dateTimeValidator(dateOfBirth);
-  const [day, month, year] = dateOfBirth.split("/");
+  const [month, day, year] = dateOfBirth.split("/");
 
   const payoutInfo = await PayoutInfo.findOne({ host: userId });
 

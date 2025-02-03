@@ -333,7 +333,8 @@ const getSingleCar = async (userData, query) => {
 
     return {
       ...car.toObject(),
-      isFavorite: car._id.toString() === favorite.car.toString() ? true : false,
+      isFavorite:
+        car?._id?.toString() === favorite?.car?.toString() ? true : false,
     };
   }
 
@@ -369,7 +370,7 @@ const getAllCar = async (userData, query) => {
     seats,
     isElectric,
   } = query || {};
-
+  console.log(query);
   validateFields(query, ["fromDate", "fromTime", "toDate", "toTime"]);
   dateTimeValidator(fromDate, fromTime);
   dateTimeValidator(toDate, toTime);
