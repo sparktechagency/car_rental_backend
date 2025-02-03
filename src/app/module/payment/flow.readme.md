@@ -127,6 +127,3 @@ needs personal information to complete
 }
 
 ```
-
-nardolimited@gmail.com
-Airbnb123.!

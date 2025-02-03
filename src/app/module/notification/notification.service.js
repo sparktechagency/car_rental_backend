@@ -1,9 +1,30 @@
 const QueryBuilder = require("../../../builder/queryBuilder");
+const { ENUM_USER_ROLE } = require("../../../util/enum");
 const validateFields = require("../../../util/validateFields");
+const AdminNotification = require("../adminNotification/adminNotification.model");
 const Notification = require("./notification");
 
 const getAllNotifications = async (user, query) => {
-  const workersQuery = new QueryBuilder(
+  console.log(user);
+
+  if (user.role === ENUM_USER_ROLE.ADMIN) {
+    const notificationQuery = new QueryBuilder(
+      AdminNotification.find({}),
+      query
+    )
+      .search([""])
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+
+    const result = await notificationQuery.modelQuery;
+    const meta = await notificationQuery.countTotal();
+
+    return { meta, result };
+  }
+
+  const notificationQuery = new QueryBuilder(
     Notification.find({ toId: user.userId }),
     query
   )
@@ -13,8 +34,8 @@ const getAllNotifications = async (user, query) => {
     .paginate()
     .fields();
 
-  const result = await workersQuery.modelQuery;
-  const meta = await workersQuery.countTotal();
+  const result = await notificationQuery.modelQuery;
+  const meta = await notificationQuery.countTotal();
 
   return { meta, result };
 };
