@@ -21,42 +21,62 @@ const cliEndPointSecret = config.stripe.stripe_cli_webhook_secret;
 
 const createCheckout = async (userData, payload) => {
   const { userId } = userData || {};
-  const { carId, tripId, amount } = payload || {};
+  const { carId, tripId, amount: prevAmount } = payload || {};
+  const amount = Number(prevAmount);
   let session = {};
-  let car = {};
-  let trip = {};
 
   validateFields(payload, ["carId", "tripId", "amount"]);
 
-  try {
-    [car, trip, session] = await Promise.all([
-      Car.findById(carId),
-      Trip.findById(tripId),
-      stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        mode: "payment",
-        success_url: `http://${config.base_url}:${config.port}/payment/success`,
-        cancel_url: `http://${config.base_url}:${config.port}/payment/cancel`,
-        line_items: [
-          {
-            price_data: {
-              currency: "gbp",
-              product_data: {
-                name: "Trip Cost",
-              },
-              unit_amount: Number(amount) * 100,
-            },
-            quantity: 1,
+  const [car, trip] = await Promise.all([
+    Car.findById(carId),
+    Trip.findById(tripId).populate([
+      {
+        path: "user",
+        select: "age",
+      },
+    ]),
+  ]);
+  if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
+  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+
+  const youngDriverFee = trip.user.age < 25 ? 20 : 0;
+  const cleaningFee = amount * 0.055;
+  const platformFee = amount * 0.25;
+  const totalAmount = amount + platformFee + cleaningFee + youngDriverFee;
+
+  return {
+    age: trip.user.age,
+    youngDriverFee,
+    cleaningFee,
+    platformFee,
+    totalAmount,
+  };
+
+  const sessionData = {
+    payment_method_types: ["card"],
+    mode: "payment",
+    success_url: `http://${config.base_url}:${config.port}/payment/success`,
+    cancel_url: `http://${config.base_url}:${config.port}/payment/cancel`,
+    line_items: [
+      {
+        price_data: {
+          currency: "gbp",
+          product_data: {
+            name: "Trip Cost",
+            description: `Platform Fee: ${null} ${null}`,
           },
-        ],
-      }),
-    ]);
+          unit_amount: Number(amount) * 100,
+        },
+        quantity: 1,
+      },
+    ],
+  };
+
+  try {
+    session = await stripe.checkout.sessions.create(sessionData);
   } catch (error) {
     throw new ApiError(status.INTERNAL_SERVER_ERROR, error.message);
   }
-
-  if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
-  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
 
   const { id: checkout_session_id, url } = session || {};
   const paymentData = {
@@ -308,18 +328,18 @@ const updatePaymentRefundToDB = async (refundData) => {
 };
 
 // Delete unpaid payments every day at midnight
-cron.schedule(
-  "0 0 * * *",
-  catchAsync(async () => {
-    const result = await Payment.deleteMany({
-      status: ENUM_PAYMENT_STATUS.UNPAID,
-    });
+// cron.schedule(
+//   "0 0 * * *",
+//   catchAsync(async () => {
+//     const result = await Payment.deleteMany({
+//       status: ENUM_PAYMENT_STATUS.UNPAID,
+//     });
 
-    if (result.deletedCount > 0) {
-      logger.info(`Deleted ${result.deletedCount} unpaid payments`);
-    }
-  })
-);
+//     if (result.deletedCount > 0) {
+//       logger.info(`Deleted ${result.deletedCount} unpaid payments`);
+//     }
+//   })
+// );
 
 const StripeService = {
   webhookManager,
