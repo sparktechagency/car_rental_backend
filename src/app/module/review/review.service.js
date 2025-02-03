@@ -55,35 +55,6 @@ const postReview = async (userData, payload) => {
     },
   ]);
 
-  // const [avgCarRatingAgg, avgHostRatingAgg] = await Promise.all([
-  //   Review.aggregate([
-  //     {
-  //       $match: { car: carObjectId },
-  //     },
-  //     {
-  //       $group: {
-  //         _id: "$car",
-  //         avgRating: {
-  //           $avg: "$rating",
-  //         },
-  //       },
-  //     },
-  //   ]),
-  //   Car.aggregate([
-  //     {
-  //       $match: { user: car.user },
-  //     },
-  //     {
-  //       $group: {
-  //         _id: "$user",
-  //         avgRating: {
-  //           $avg: "$rating",
-  //         },
-  //       },
-  //     },
-  //   ]),
-  // ]);
-
   const avgCarRating = avgCarRatingAgg[0].avgRating.toFixed(2) ?? 0;
   const avgHostRating = avgHostRatingAgg[0].avgRating.toFixed(2) ?? 0;
   console.log(avgCarRating, avgHostRating);
