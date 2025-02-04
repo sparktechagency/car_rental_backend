@@ -1,6 +1,6 @@
 const { FavoriteService } = require("./favorite.service");
 const sendResponse = require("../../../shared/sendResponse");
-const catchAsync = require("../../../shared/catchasync");
+const catchAsync = require("../../../shared/catchAsync");
 
 const addRemoveFavorite = catchAsync(async (req, res) => {
   const result = await FavoriteService.addRemoveFavorite(req.user, req.query);
