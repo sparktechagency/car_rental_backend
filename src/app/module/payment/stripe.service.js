@@ -255,7 +255,7 @@ const transferPayment = async (payload) => {
 
   const { stripe_account_id } = hostPayoutInfo;
   const transferObj = {
-    amount: Math.ceil(payment.hostAmount * 100 * 0.9),
+    amount: Math.ceil(payment.hostAmount * 100),
     currency: "gbp",
     destination: stripe_account_id,
   };
@@ -266,7 +266,7 @@ const transferPayment = async (payload) => {
     Payment.updateOne(
       { _id: paymentId },
       {
-        transferred_amount: payment.amount * 0.9,
+        transferred_amount: payment.hostAmount,
         status: ENUM_PAYMENT_STATUS.TRANSFERRED,
       }
     ),
