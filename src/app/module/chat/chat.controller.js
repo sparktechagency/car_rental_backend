@@ -1,6 +1,6 @@
 const { ChatService } = require("./chat.service");
 const sendResponse = require("../../../shared/sendResponse");
-const catchAsync = require("../../../shared/catchasync");
+const catchAsync = require("../../../shared/catchAsync");
 
 const getChatMessages = catchAsync(async (req, res) => {
   const result = await ChatService.getChatMessages(req.query);
