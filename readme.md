@@ -4,26 +4,11 @@
 
 [Database Design](https://miro.com/welcomeonboard/NSt2cERWeTZPeU5NKzZPeEI3YXM2QzlNN2Y5RmM0eWh1dzlWanBrZE9DZDJnOENxWWVpTjY2Y0w2Y1I1SWMrNkFkZXp0OEd2TmI0TEFKa0tFSlZqNXZhb3RCck9HTUtFSFRwdXkyVkxtQWRPaVdGMTd2VzZCdTZKWHNWRDhyZDJBd044SHFHaVlWYWk0d3NxeHNmeG9BPT0hdjE=?share_link_id=675653189373)
 
-### requirements
-
-1. how do you want to earn? charge the host 10%
-2. the max radius problem? unlimited around UK
-
 ### To do
 
-7. send email after user becomes host. tell him to login
-8. connect stripe with clients stripe change credentials of mail, mongodb
-9. Modify the email templates
-10. send email on car booking
-11. edit the email template with the Nardo logo on registration
-12. check payments with dashboard
-13. re-deploy after test
-
-# frontend check
-
-1. check the images
-2. map zoom
-3. first time card add functionality and edge cases
+1. connect stripe with clients stripe change credentials of mail, mongodb
+2. check payments with dashboard
+3. re-deploy after test
 
 # gpt cmd
 

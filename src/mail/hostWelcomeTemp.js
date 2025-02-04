@@ -1,4 +1,4 @@
-const signUpEmailTemp = (data) => `
+const hostWelcomeTemp = (data) => `
   <html>
     <head>
       <style>
@@ -36,17 +36,6 @@ const signUpEmailTemp = (data) => `
           font-size: 16px;
           margin-bottom: 20px;
         }
-        .code {
-          display: inline-block;
-          background-color: #e8f0fe;
-          padding: 14px 24px;
-          font-size: 20px;
-          font-weight: bold;
-          color: #1a73e8;
-          border-radius: 6px;
-          letter-spacing: 2px;
-          margin: 20px 0;
-        }
         .footer {
           margin-top: 30px;
           font-size: 13px;
@@ -67,13 +56,12 @@ const signUpEmailTemp = (data) => `
         <div class="nardo-logo">
           <img src="https://res.cloudinary.com/dhn7jffxh/image/upload/v1738644091/nardo_pftciu.png" alt="Nardo Logo" class="logo" />
         </div>
-        <h1>Welcome to Nardo</h1>
-        <p>Hello, ${data.user}</p>
-        <p>Thank you for registering with Nardo. To activate your account, please use the following activation code:</p>
-        <div class="code">${data.activationCode}</div>
-        <p>Please enter this code on the activation page within the next <strong>${data.activationCodeExpire} minutes</strong>.</p>
-        <p>If you have any questions, please contact us at <a href="mailto:nardolimited@gmail.com">nardolimited@gmail.com</a>.</p>
-        <p>Thank you,<br>The Nardo Team</p>
+        <h1>Congratulations on Becoming a Host!</h1>
+        <p>Hello ${data.user},</p>
+        <p>We're thrilled to inform you that your car submission has been approved by our admin team.</p>
+        <p>You are now officially a <strong>Host</strong> on Nardo! To access all host privileges and manage your car listings, please log out and log back in.</p>
+        <p>If you have any questions or need assistance, feel free to reach out to us at <a href="mailto:nardolimited@gmail.com">nardolimited@gmail.com</a>.</p>
+        <p>Happy Hosting!<br><strong>The Nardo Team</strong></p>
       </div>
       <div class="footer">
         <p>&copy; Nardo - All Rights Reserved.</p>
@@ -83,4 +71,4 @@ const signUpEmailTemp = (data) => `
   </html>
 `;
 
-module.exports = signUpEmailTemp;
+module.exports = hostWelcomeTemp;
