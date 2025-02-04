@@ -11,23 +11,13 @@
 
 ### To do
 
-1. Include max distance on car search
-2. Include approved car on car search
-3. how much surcharge?
-4. what about deposit and refund?
-5. secure payment routes
-6. put only approved cars on main search
-7. fix payment
-8. send email after user becomes host. tell him to login
-9. connect stripe with clients stripe
-10. test the transfer
-11. Modify the email templates
-12. send email on car booking
-13. edit the email template with the Nardo logo on registration
-14. uncomment node-cron
-15. check payments with dashboard
-16. change credentials of stripe, mail, mongodb
-17. re-deploy after test
+7. send email after user becomes host. tell him to login
+8. connect stripe with clients stripe change credentials of mail, mongodb
+9. Modify the email templates
+10. send email on car booking
+11. edit the email template with the Nardo logo on registration
+12. check payments with dashboard
+13. re-deploy after test
 
 # frontend check
 

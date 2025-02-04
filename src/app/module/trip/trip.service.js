@@ -244,18 +244,18 @@ const updateTripStatus = async (payload) => {
   return updatedTrip;
 };
 
-// // delete unpaid trips
-// cron.schedule("*/4 * * * *", async () => {
-//   try {
-//     const result = await Trip.deleteMany({ isPaid: false });
+// delete unpaid trips
+cron.schedule("*/4 * * * *", async () => {
+  try {
+    const result = await Trip.deleteMany({ isPaid: false });
 
-//     if (result.deletedCount > 0) {
-//       logger.info(`Removed ${result.deletedCount} unpaid trips`);
-//     }
-//   } catch (error) {
-//     logger.error("Error removing unpaid trips:", error);
-//   }
-// });
+    if (result.deletedCount > 0) {
+      logger.info(`Removed ${result.deletedCount} unpaid trips`);
+    }
+  } catch (error) {
+    logger.error("Error removing unpaid trips:", error);
+  }
+});
 
 const TripService = {
   addTrip,

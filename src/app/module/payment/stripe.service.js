@@ -315,18 +315,18 @@ const updatePaymentRefundToDB = async (refundData) => {
 };
 
 // Delete unpaid payments every day at midnight
-// cron.schedule(
-//   "0 0 * * *",
-//   catchAsync(async () => {
-//     const result = await Payment.deleteMany({
-//       status: ENUM_PAYMENT_STATUS.UNPAID,
-//     });
+cron.schedule(
+  "0 0 * * *",
+  catchAsync(async () => {
+    const result = await Payment.deleteMany({
+      status: ENUM_PAYMENT_STATUS.UNPAID,
+    });
 
-//     if (result.deletedCount > 0) {
-//       logger.info(`Deleted ${result.deletedCount} unpaid payments`);
-//     }
-//   })
-// );
+    if (result.deletedCount > 0) {
+      logger.info(`Deleted ${result.deletedCount} unpaid payments`);
+    }
+  })
+);
 
 const StripeService = {
   webhookManager,
