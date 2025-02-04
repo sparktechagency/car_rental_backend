@@ -26,7 +26,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/", routes);
 
 app.get("/", async (req, res) => {
-  res.json("Welcome to Car Rental");
+  res.json("Welcome to Nardo");
 });
 
 app.use(globalErrorHandler);
