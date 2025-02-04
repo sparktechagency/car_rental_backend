@@ -42,15 +42,8 @@ const createCheckout = async (userData, payload) => {
   const youngDriverFee = trip.user.age < 25 ? 20 : 0;
   const cleaningFee = amount * 0.055;
   const platformFee = amount * 0.25;
+  const hostAmount = amount - platformFee;
   const totalAmount = amount + platformFee + cleaningFee + youngDriverFee;
-
-  return {
-    age: trip.user.age,
-    youngDriverFee,
-    cleaningFee,
-    platformFee,
-    totalAmount,
-  };
 
   const sessionData = {
     payment_method_types: ["card"],
@@ -63,9 +56,15 @@ const createCheckout = async (userData, payload) => {
           currency: "gbp",
           product_data: {
             name: "Trip Cost",
-            description: `Platform Fee: ${null} ${null}`,
+            description: `
+            Fees Breakdown • 
+            Amount: ${amount} • 
+            Platform Fee: ${platformFee} • 
+            cleaning Fee: ${cleaningFee} • 
+            Young Driver Fee: ${youngDriverFee} 
+            `,
           },
-          unit_amount: Number(amount) * 100,
+          unit_amount: totalAmount * 100,
         },
         quantity: 1,
       },
@@ -85,6 +84,7 @@ const createCheckout = async (userData, payload) => {
     host: car.user,
     trip: tripId,
     amount,
+    hostAmount,
     checkout_session_id,
   };
 
@@ -252,28 +252,15 @@ const transferPayment = async (payload) => {
   const hostPayoutInfo = await PayoutInfo.findOne({ host: payment.host });
   if (!hostPayoutInfo)
     throw new ApiError(status.NOT_FOUND, "Host payout info does not exist");
-  const { stripe_account_id } = hostPayoutInfo;
-  console.log(stripe_account_id);
 
+  const { stripe_account_id } = hostPayoutInfo;
   const transferObj = {
-    amount: Math.ceil(payment.amount * 100 * 0.9),
+    amount: Math.ceil(payment.hostAmount * 100 * 0.9),
     currency: "gbp",
     destination: stripe_account_id,
-    // destination: "acct_1QmqpJBTUgJeIlmw",
   };
 
   const transfer = await stripe.transfers.create(transferObj);
-
-  // const [payouts, accountBalance] = await Promise.all([
-  //   stripe.payouts.list({
-  //     stripeAccount: stripe_account_id,
-  //   }),
-  //   stripe.balance.retrieve({
-  //     stripeAccount: stripe_account_id,
-  //   }),
-  // ]);
-
-  // console.log(payouts, accountBalance);
 
   Promise.all([
     Payment.updateOne(
@@ -286,8 +273,8 @@ const transferPayment = async (payload) => {
   ]);
 
   return {
-    amount: payment.amount * 0.9,
-    profit: payment.amount * 0.1,
+    hostAmount: payment.hostAmount,
+    profit: payment.amount - payment.hostAmount,
   };
 };
 

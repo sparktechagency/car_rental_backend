@@ -24,6 +24,10 @@
 11. Modify the email templates
 12. send email on car booking
 13. edit the email template with the Nardo logo on registration
+14. uncomment node-cron
+15. check payments with dashboard
+16. change credentials of stripe, mail, mongodb
+17. re-deploy after test
 
 # frontend check
 
