@@ -135,22 +135,14 @@ const updateHostLicense = async (req) => {
   const { user: userData, body: payload, files } = req || {};
   const { userId } = userData;
   const { hostLicenseFrontImage, hostLicenseBackImage } = files || {};
-  const {
-    carId,
-    pricePerDay,
-    maxTravelDistancePerDay,
-    finePerKm,
-    youngDriverFee,
-    cleaningFee,
-  } = payload || {};
+  const { carId, pricePerDay, maxTravelDistancePerDay, finePerKm } =
+    payload || {};
 
   validateFields(payload, [
     "carId",
     "pricePerDay",
     "maxTravelDistancePerDay",
     "finePerKm",
-    "youngDriverFee",
-    "cleaningFee",
   ]);
   validateFields(files, ["hostLicenseFrontImage", "hostLicenseBackImage"]);
 
@@ -160,8 +152,6 @@ const updateHostLicense = async (req) => {
       pricePerDay,
       maxTravelDistancePerDay,
       finePerKm,
-      youngDriverFee,
-      cleaningFee,
       hostLicenseFrontImage: hostLicenseFrontImage[0].path,
       hostLicenseBackImage: hostLicenseBackImage[0].path,
     },
@@ -276,8 +266,6 @@ const sendAddCarReq = async (userData, query) => {
     "hostLicenseFrontImage",
     "hostLicenseBackImage",
     "pricePerDay",
-    "youngDriverFee",
-    "cleaningFee",
     "maxTravelDistancePerDay",
     "finePerKm",
     "features",

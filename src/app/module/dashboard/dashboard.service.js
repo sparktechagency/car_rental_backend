@@ -14,6 +14,8 @@ const { updateCarAndNotify } = require("../../../util/updateCarAndNotify");
 const postNotification = require("../../../util/postNotification");
 const Auth = require("../auth/auth.model");
 const Payment = require("../payment/payment.model");
+const hostWelcomeTemp = require("../../../mail/hostWelcomeTemp");
+const { sendEmail } = require("../../../util/sendEmail");
 
 // destination ========================
 const addDestination = async (req) => {
@@ -315,9 +317,6 @@ const getAllAddCarReq = async (query) => {
     addCarReqQuery.countTotal(),
   ]);
 
-  // if (!allAddCarReq.length)
-  //   throw new ApiError(status.NOT_FOUND, "Add car requests not found");
-
   return {
     meta,
     allAddCarReq,
@@ -325,6 +324,12 @@ const getAllAddCarReq = async (query) => {
 };
 
 const approveCar = async (query) => {
+  /**
+   * Approves a car listing.
+   * If a user is adding a car for the first time, approval will automatically grant them "Host" status.
+   * Additionally, an email notification will be sent informing them of their new status.
+   */
+
   const { carId, status: carStatus } = query;
 
   validateFields(query, ["carId", "status"]);
@@ -342,6 +347,17 @@ const approveCar = async (query) => {
     ]);
 
     postNotification("Role Updated", `You are a host now.`, user._id);
+
+    try {
+      sendEmail({
+        email: user.email,
+        subject: "Welcome To Nardo",
+        html: hostWelcomeTemp({ user: user.name }),
+      });
+    } catch (error) {
+      console.log(error);
+      throw new ApiError(status.INTERNAL_SERVER_ERROR, "Email was not sent");
+    }
   }
 
   if (carStatus === ENUM_CAR_STATUS.APPROVED) {

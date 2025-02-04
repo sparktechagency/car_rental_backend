@@ -85,12 +85,6 @@ const carSchema = new Schema(
     deliveryFee: {
       type: Number,
     },
-    youngDriverFee: {
-      type: Number,
-    },
-    cleaningFee: {
-      type: Number,
-    },
     location: {
       type: {
         type: String,

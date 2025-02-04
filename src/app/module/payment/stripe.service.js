@@ -13,6 +13,8 @@ const User = require("../user/user.model");
 const PayoutInfo = require("./payoutInfo.model");
 const dateTimeValidator = require("../../../util/dateTimeValidator");
 const Trip = require("../trip/trip.model");
+const bookingTemp = require("../../../mail/bookingTemp");
+const { sendEmail } = require("../../../util/sendEmail");
 
 const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
@@ -278,6 +280,8 @@ const transferPayment = async (payload) => {
   };
 };
 
+// utility functions --------------
+
 const updatePaymentToDB = async (eventData) => {
   const { id, payment_intent } = eventData;
 
@@ -300,7 +304,22 @@ const updatePaymentToDB = async (eventData) => {
     { _id: updatedPayment.trip },
     { $set: { isPaid: true } },
     { new: true, runValidators: true }
-  );
+  ).populate([
+    {
+      path: "user",
+      select: "name email",
+    },
+    {
+      path: "host",
+      select: "name",
+    },
+    {
+      path: "car",
+      select: "year make model",
+    },
+  ]);
+
+  await sendBookingMail(updatedPayment, updatedTrip);
 };
 
 const updatePaymentRefundToDB = async (refundData) => {
@@ -312,6 +331,34 @@ const updatePaymentRefundToDB = async (refundData) => {
     },
     { timestamps: true }
   );
+};
+
+const sendBookingMail = async (updatedPayment, updatedTrip) => {
+  const emailData = {
+    transactionId: updatedPayment.payment_intent_id,
+    name: updatedTrip.user.name,
+    hostName: updatedTrip.host.name,
+    carName: `${updatedTrip.car.year} ${updatedTrip.car.make} ${updatedTrip.car.model}`,
+    startDateTime: `${updatedTrip.tripStartDate} ${updatedTrip.tripStartTime}`,
+    endDateTime: `${updatedTrip.tripEndDate} ${updatedTrip.tripEndTime}`,
+    pickupLocation: updatedTrip.pickupLocation
+      ? updatedTrip.pickupLocation
+      : "N/A",
+    returnLocation: updatedTrip.returnLocation,
+    price: updatedPayment.amount,
+    status: updatedTrip.status,
+  };
+
+  try {
+    sendEmail({
+      email: updatedTrip.user.email,
+      subject: "Nardo Booking Details",
+      html: bookingTemp(emailData),
+    });
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(status.INTERNAL_SERVER_ERROR, "Email was not sent");
+  }
 };
 
 // Delete unpaid payments every day at midnight
