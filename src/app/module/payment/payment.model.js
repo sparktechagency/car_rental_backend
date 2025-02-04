@@ -27,6 +27,10 @@ const paymentSchema = new Schema(
       type: Number,
       required: true,
     },
+    hostAmount: {
+      type: Number,
+      required: true,
+    },
     refund_amount: {
       type: Number,
     },

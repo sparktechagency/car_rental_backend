@@ -16,6 +16,13 @@ const signUpEmailTemp = (data) => `
           border-radius: 10px;
           box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
+        .nardo-logo{
+          text-align: center
+        }
+        .logo {
+          max-width: 150px;
+          margin-bottom: 20px;
+        }
         h1 {
           color: #1a73e8;
           font-size: 26px;
@@ -57,6 +64,9 @@ const signUpEmailTemp = (data) => `
     </head>
     <body>
       <div class="container">
+        <div class="nardo-logo">
+          <img src="https://res.cloudinary.com/dhn7jffxh/image/upload/v1738644091/nardo_pftciu.png" alt="Car Rental Logo" class="logo" />
+        </div>
         <h1>Welcome to Car Rental</h1>
         <p>Hello, ${data.user}</p>
         <p>Thank you for registering with Car Rental. To activate your account, please use the following activation code:</p>

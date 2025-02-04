@@ -21,42 +21,61 @@ const cliEndPointSecret = config.stripe.stripe_cli_webhook_secret;
 
 const createCheckout = async (userData, payload) => {
   const { userId } = userData || {};
-  const { carId, tripId, amount } = payload || {};
+  const { carId, tripId, amount: prevAmount } = payload || {};
+  const amount = Number(prevAmount);
   let session = {};
-  let car = {};
-  let trip = {};
 
   validateFields(payload, ["carId", "tripId", "amount"]);
 
-  try {
-    [car, trip, session] = await Promise.all([
-      Car.findById(carId),
-      Trip.findById(tripId),
-      stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        mode: "payment",
-        success_url: `http://${config.base_url}:${config.port}/payment/success`,
-        cancel_url: `http://${config.base_url}:${config.port}/payment/cancel`,
-        line_items: [
-          {
-            price_data: {
-              currency: "gbp",
-              product_data: {
-                name: "Trip Cost",
-              },
-              unit_amount: Number(amount) * 100,
-            },
-            quantity: 1,
+  const [car, trip] = await Promise.all([
+    Car.findById(carId),
+    Trip.findById(tripId).populate([
+      {
+        path: "user",
+        select: "age",
+      },
+    ]),
+  ]);
+  if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
+  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
+
+  const youngDriverFee = trip.user.age < 25 ? 20 : 0;
+  const cleaningFee = amount * 0.055;
+  const platformFee = amount * 0.25;
+  const hostAmount = amount - platformFee;
+  const totalAmount = amount + platformFee + cleaningFee + youngDriverFee;
+
+  const sessionData = {
+    payment_method_types: ["card"],
+    mode: "payment",
+    success_url: `http://${config.base_url}:${config.port}/payment/success`,
+    cancel_url: `http://${config.base_url}:${config.port}/payment/cancel`,
+    line_items: [
+      {
+        price_data: {
+          currency: "gbp",
+          product_data: {
+            name: "Trip Cost",
+            description: `
+            Fees Breakdown • 
+            Amount: ${amount} • 
+            Platform Fee: ${platformFee} • 
+            cleaning Fee: ${cleaningFee} • 
+            Young Driver Fee: ${youngDriverFee} 
+            `,
           },
-        ],
-      }),
-    ]);
+          unit_amount: totalAmount * 100,
+        },
+        quantity: 1,
+      },
+    ],
+  };
+
+  try {
+    session = await stripe.checkout.sessions.create(sessionData);
   } catch (error) {
     throw new ApiError(status.INTERNAL_SERVER_ERROR, error.message);
   }
-
-  if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
-  if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
 
   const { id: checkout_session_id, url } = session || {};
   const paymentData = {
@@ -65,6 +84,7 @@ const createCheckout = async (userData, payload) => {
     host: car.user,
     trip: tripId,
     amount,
+    hostAmount,
     checkout_session_id,
   };
 
@@ -232,42 +252,29 @@ const transferPayment = async (payload) => {
   const hostPayoutInfo = await PayoutInfo.findOne({ host: payment.host });
   if (!hostPayoutInfo)
     throw new ApiError(status.NOT_FOUND, "Host payout info does not exist");
-  const { stripe_account_id } = hostPayoutInfo;
-  console.log(stripe_account_id);
 
+  const { stripe_account_id } = hostPayoutInfo;
   const transferObj = {
-    amount: Math.ceil(payment.amount * 100 * 0.9),
+    amount: Math.ceil(payment.hostAmount * 100),
     currency: "gbp",
     destination: stripe_account_id,
-    // destination: "acct_1QmqpJBTUgJeIlmw",
   };
 
   const transfer = await stripe.transfers.create(transferObj);
-
-  // const [payouts, accountBalance] = await Promise.all([
-  //   stripe.payouts.list({
-  //     stripeAccount: stripe_account_id,
-  //   }),
-  //   stripe.balance.retrieve({
-  //     stripeAccount: stripe_account_id,
-  //   }),
-  // ]);
-
-  // console.log(payouts, accountBalance);
 
   Promise.all([
     Payment.updateOne(
       { _id: paymentId },
       {
-        transferred_amount: payment.amount * 0.9,
+        transferred_amount: payment.hostAmount,
         status: ENUM_PAYMENT_STATUS.TRANSFERRED,
       }
     ),
   ]);
 
   return {
-    amount: payment.amount * 0.9,
-    profit: payment.amount * 0.1,
+    hostAmount: payment.hostAmount,
+    profit: payment.amount - payment.hostAmount,
   };
 };
 

@@ -399,7 +399,7 @@ const getAllCar = async (userData, query) => {
 
   const searchFilters = {
     _id: { $nin: unavailableCarIds },
-    // status: { $eq: ENUM_CAR_STATUS.APPROVED },
+    status: { $eq: ENUM_CAR_STATUS.APPROVED },
   };
 
   if (destination) searchFilters.destination = destination;
@@ -418,7 +418,7 @@ const getAllCar = async (userData, query) => {
           type: "Point",
           coordinates: [longitude, latitude],
         },
-        // $maxDistance: 5000000,
+        $maxDistance: 500000,
       },
     };
   }
