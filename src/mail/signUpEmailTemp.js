@@ -65,18 +65,18 @@ const signUpEmailTemp = (data) => `
     <body>
       <div class="container">
         <div class="nardo-logo">
-          <img src="https://res.cloudinary.com/dhn7jffxh/image/upload/v1738644091/nardo_pftciu.png" alt="Car Rental Logo" class="logo" />
+          <img src="https://res.cloudinary.com/dhn7jffxh/image/upload/v1738644091/nardo_pftciu.png" alt="Nardo Logo" class="logo" />
         </div>
-        <h1>Welcome to Car Rental</h1>
+        <h1>Welcome to Nardo</h1>
         <p>Hello, ${data.user}</p>
-        <p>Thank you for registering with Car Rental. To activate your account, please use the following activation code:</p>
+        <p>Thank you for registering with Nardo. To activate your account, please use the following activation code:</p>
         <div class="code">${data.activationCode}</div>
         <p>Please enter this code on the activation page within the next <strong>${data.activationCodeExpire} minutes</strong>.</p>
         <p>If you have any questions, please contact us at <a href="mailto:thakursaad613@gmail.com">thakursaad613@gmail.com</a>.</p>
-        <p>Thank you,<br>The Car Rental Team</p>
+        <p>Thank you,<br>The Nardo Team</p>
       </div>
       <div class="footer">
-        <p>&copy; Car Rental - All Rights Reserved.</p>
+        <p>&copy; Nardo - All Rights Reserved.</p>
         <p><a href="https://yourwebsite.com/privacy">Privacy Policy</a> | <a href="https://yourwebsite.com/contact">Contact Support</a></p>
       </div>
     </body>
