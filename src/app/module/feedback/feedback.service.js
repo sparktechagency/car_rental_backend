@@ -21,7 +21,15 @@ const postFeedback = async (userData, payload) => {
 };
 
 const getAllFeedback = async (query) => {
-  const feedbackQuery = new QueryBuilder(Feedback.find({}), query)
+  const feedbackQuery = new QueryBuilder(
+    Feedback.find({}).populate([
+      {
+        path: "user",
+        select: "email name email age profile_image phone_number address",
+      },
+    ]),
+    query
+  )
     .search([])
     .filter()
     .sort()
