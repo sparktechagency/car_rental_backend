@@ -311,7 +311,7 @@ const updatePaymentToDB = async (eventData) => {
     },
     {
       path: "host",
-      select: "name",
+      select: "name email",
     },
     {
       path: "car",
@@ -349,9 +349,21 @@ const sendBookingMail = async (updatedPayment, updatedTrip) => {
     status: updatedTrip.status,
   };
 
+  // sending booking email to both user and host
   try {
     sendEmail({
       email: updatedTrip.user.email,
+      subject: "Nardo Booking Details",
+      html: bookingTemp(emailData),
+    });
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(status.INTERNAL_SERVER_ERROR, "Email was not sent");
+  }
+
+  try {
+    sendEmail({
+      email: updatedTrip.host.email,
       subject: "Nardo Booking Details",
       html: bookingTemp(emailData),
     });

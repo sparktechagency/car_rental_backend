@@ -73,12 +73,12 @@ const bookingTemp = (data) =>
               </div>
               <h1>Trip Confirmation</h1>
               <p>Hello, ${data.name},</p>
-              <p>Thank you for booking with <strong>Nardo</strong>. Here are your Trip details:</p>
+              <p>New booking from <strong>Nardo</strong>. Here are your Trip details:</p>
               
               <table>
                 <tr>
                   <th>Transaction ID</th>
-                  <td>${data.transactionId}</td>
+                  <td>${data.transactionId || "N/A"}</td>
                 </tr>              
                 <tr>
                   <th>Host Name</th>
@@ -113,10 +113,6 @@ const bookingTemp = (data) =>
                   <td>${data.status}</td>
                 </tr>
               </table>
-
-            <div>
-              <p>You will be notified when the host accepts your trip request.</p>              
-            </div>              
 
               <p>We look forward to serving you. If you have any questions, feel free to contact us at <a href="mailto:nardolimited@gmail.com">nardolimited@gmail.com</a>.</p>
               <p>Best regards,<br>The Nardo Team</p>

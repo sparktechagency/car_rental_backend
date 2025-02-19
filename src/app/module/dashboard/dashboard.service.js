@@ -335,7 +335,10 @@ const approveCar = async (query) => {
   validateFields(query, ["carId", "status"]);
 
   const car = await Car.findById(carId);
+  if (!car) throw new ApiError(status.NOT_FOUND, "car not found");
+
   const user = await User.findById(car.user);
+  if (!user) throw new ApiError(status.NOT_FOUND, "owner of car not found");
 
   if (
     user.role === ENUM_USER_ROLE.USER &&
