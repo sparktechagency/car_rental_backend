@@ -9,7 +9,11 @@ let io;
 
 io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://178.128.174.197:8003",
+    ],
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   },
 });
