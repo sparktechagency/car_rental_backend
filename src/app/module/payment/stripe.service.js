@@ -66,7 +66,7 @@ const createCheckout = async (userData, payload) => {
             Young Driver Fee: ${youngDriverFee} 
             `,
           },
-          unit_amount: totalAmount * 100,
+          unit_amount: Math.round(totalAmount * 100),
         },
         quantity: 1,
       },
