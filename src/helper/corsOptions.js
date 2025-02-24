@@ -16,6 +16,7 @@ const corsOptions = {
     "http://178.128.174.197:4173",
     "http://178.128.174.197:4174",
     "https://nardo.app",
+    "https://admin.nardo.app",
   ],
   credentials: true,
 };
