@@ -143,7 +143,8 @@ const refundPayment = async (payload) => {
 const updateHostPaymentDetails = async (req) => {
   const { user: userData, body: payload } = req;
   const { userId, email } = userData;
-  const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  // const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const clientIp = req.headers["x-real-ip"] 
   console.log("x-forwarded-for====================", req.headers["x-forwarded-for"]);
   console.log("remoteAddress====================", req.socket.remoteAddress);
   console.log("headers====================", req.headers);
