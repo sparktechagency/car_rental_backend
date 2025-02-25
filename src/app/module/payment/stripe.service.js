@@ -143,8 +143,8 @@ const refundPayment = async (payload) => {
 const updateHostPaymentDetails = async (req) => {
   const { user: userData, body: payload } = req;
   const { userId, email } = userData;
-  console.log("====================", clientIp, req.headers);
   const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  console.log("====================", clientIp, req.headers);
   const {
     website_url: url,
     first_name,
