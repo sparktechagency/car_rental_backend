@@ -15,6 +15,7 @@ const dateTimeValidator = require("../../../util/dateTimeValidator");
 const Trip = require("../trip/trip.model");
 const bookingTemp = require("../../../mail/bookingTemp");
 const { sendEmail } = require("../../../util/sendEmail");
+const { response } = require("express");
 
 const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
