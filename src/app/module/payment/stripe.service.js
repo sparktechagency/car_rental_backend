@@ -18,8 +18,8 @@ const { sendEmail } = require("../../../util/sendEmail");
 
 const stripe = require("stripe")(config.stripe.stripe_secret_key);
 
-const endPointSecret = config.stripe.stripe_webhook_secret;
-const cliEndPointSecret = config.stripe.stripe_cli_webhook_secret;
+const endPointSecret = config.stripe.stripe_webhook_secret; // production
+const cliEndPointSecret = config.stripe.stripe_cli_webhook_secret; // development
 
 const createCheckout = async (userData, payload) => {
   const { userId } = userData || {};
@@ -105,7 +105,8 @@ const webhookManager = async (request) => {
     event = stripe.webhooks.constructEvent(
       request.body,
       sig,
-      cliEndPointSecret
+      // cliEndPointSecret
+      endPointSecret
     );
   } catch (err) {
     response.status(400).send(`Webhook Error: ${err.message}`);
