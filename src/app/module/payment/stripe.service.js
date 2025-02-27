@@ -153,6 +153,7 @@ const updateHostPaymentDetails = async (req) => {
     last_name,
     phone,
     bank_account_no,
+    routing_no,
     dateOfBirth,
     line1,
     city,
@@ -169,6 +170,7 @@ const updateHostPaymentDetails = async (req) => {
     "city",
     "postal_code",
     "bank_account_no",
+    "routing_no",
   ]);
 
   dateTimeValidator(dateOfBirth);
@@ -208,6 +210,7 @@ const updateHostPaymentDetails = async (req) => {
     external_account: {
       object: "bank_account",
       account_number: bank_account_no,
+      routing_number: routing_no,
       country: "GB",
       currency: "gbp",
     },
