@@ -148,7 +148,7 @@ const updateHostPaymentDetails = async (req) => {
   // const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress; // for local
   const clientIp = req.headers["x-real-ip"]; // for production
   const {
-    website_url: url,
+    // website_url: url,
     first_name,
     last_name,
     phone,
@@ -161,7 +161,7 @@ const updateHostPaymentDetails = async (req) => {
   } = payload || {};
 
   validateFields(payload, [
-    "website_url",
+    // "website_url",
     "first_name",
     "last_name",
     "phone",
@@ -186,8 +186,8 @@ const updateHostPaymentDetails = async (req) => {
     country: "GB",
     email,
     business_profile: {
-      mcc: "5734",
-      url,
+      // mcc: "5734",
+      // url,
     },
     business_type: "individual",
     individual: {
