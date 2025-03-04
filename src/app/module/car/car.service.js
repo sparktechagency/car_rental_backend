@@ -281,7 +281,12 @@ const sendAddCarReq = async (userData, query) => {
     "location",
   ];
 
-  validateFields(car, requiredFields);
+  // validateFields(car, requiredFields);
+  for (const field of requiredFields) {
+    if (!payload[field] && payload[field] !== 0) {
+      throw new ApiError(status.BAD_REQUEST, `${field} is required`);
+    }
+  }
 
   const updatedCar = await Car.updateOne(
     { _id: carId },

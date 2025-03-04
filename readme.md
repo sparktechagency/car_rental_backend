@@ -9,6 +9,10 @@
 1. connect stripe with clients stripe change credentials of mail, mongodb
 2. check payments with dashboard
 3. re-deploy after test
+4. check your spam box
+5. 0 instead 
+6. check your junk mail popup
+7. nardo logo on first host 
 
 # gpt cmd
 
