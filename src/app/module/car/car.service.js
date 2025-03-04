@@ -283,7 +283,7 @@ const sendAddCarReq = async (userData, query) => {
 
   // validateFields(car, requiredFields);
   for (const field of requiredFields) {
-    if (!payload[field] && payload[field] !== 0) {
+    if (!car[field] && car[field] !== 0) {
       throw new ApiError(status.BAD_REQUEST, `${field} is required`);
     }
   }
