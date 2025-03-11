@@ -227,7 +227,7 @@ const updateHostPaymentDetails = async (req) => {
   };
 
   const account = await stripe.accounts.create(stripeAccountData);
-  console.log(account);
+
   const payoutData = {
     host: userId,
     stripe_account_id: account.id,
@@ -340,13 +340,15 @@ const updatePaymentRefundToDB = async (refundData) => {
 };
 
 const sendBookingMail = async (updatedPayment, updatedTrip) => {
+  const formattedTripStartDate = formatDate(updatedTrip.tripStartDate);
+  const formattedTripEndDate = formatDate(updatedTrip.tripEndDate);
   const emailData = {
     transactionId: updatedPayment.payment_intent_id,
     name: updatedTrip.user.name,
     hostName: updatedTrip.host.name,
     carName: `${updatedTrip.car.year} ${updatedTrip.car.make} ${updatedTrip.car.model}`,
-    startDateTime: `${updatedTrip.tripStartDate} ${updatedTrip.tripStartTime}`,
-    endDateTime: `${updatedTrip.tripEndDate} ${updatedTrip.tripEndTime}`,
+    startDateTime: `${formattedTripStartDate} ${updatedTrip.tripStartTime}`,
+    endDateTime: `${formattedTripEndDate} ${updatedTrip.tripEndTime}`,
     pickupLocation: updatedTrip.pickupLocation
       ? updatedTrip.pickupLocation
       : "N/A",
@@ -377,6 +379,11 @@ const sendBookingMail = async (updatedPayment, updatedTrip) => {
     console.log(error);
     throw new ApiError(status.INTERNAL_SERVER_ERROR, "Email was not sent");
   }
+};
+
+const formatDate = (dateStr) => {
+  const [month, day, year] = dateStr.split("/");
+  return `${day}/${month}/${year}`;
 };
 
 // Delete unpaid payments every day at midnight
