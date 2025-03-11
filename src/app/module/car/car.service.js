@@ -447,26 +447,42 @@ const getDistinctMakeModelYear = async (query) => {
         make: [
           {
             $group: {
-              _id: "$make",
+              _id: {
+                $toLower: "$make",
+              },
+            },
+          },
+          {
+            $sort: {
+              _id: 1,
             },
           },
           {
             $project: {
               _id: 0,
-              value: "$_id",
+              value: { $toUpper: "$_id" },
             },
           },
         ],
         model: [
           {
             $group: {
-              _id: "$model",
+              _id: {
+                $toLower: "$model",
+              },
+            },
+          },
+          {
+            $sort: {
+              _id: 1,
             },
           },
           {
             $project: {
               _id: 0,
-              value: "$_id",
+              value: {
+                $toUpper: "$_id",
+              },
             },
           },
         ],
@@ -474,6 +490,11 @@ const getDistinctMakeModelYear = async (query) => {
           {
             $group: {
               _id: "$year",
+            },
+          },
+          {
+            $sort: {
+              _id: -1,
             },
           },
           {
