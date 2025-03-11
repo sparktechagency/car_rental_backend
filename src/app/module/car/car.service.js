@@ -460,7 +460,8 @@ const getDistinctMakeModelYear = async (query) => {
           {
             $project: {
               _id: 0,
-              value: { $toUpper: "$_id" },
+              // value: { $toUpper: "$_id" },
+              value: "$_id",
             },
           },
         ],
@@ -480,9 +481,8 @@ const getDistinctMakeModelYear = async (query) => {
           {
             $project: {
               _id: 0,
-              value: {
-                $toUpper: "$_id",
-              },
+              // value: { $toUpper: "$_id" },
+              value: "$_id",
             },
           },
         ],
