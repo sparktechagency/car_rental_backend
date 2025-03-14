@@ -43,8 +43,8 @@ const createCheckout = async (userData, payload) => {
   if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
 
   const youngDriverFee = trip.user.age < 25 ? 20 : 0;
-  const cleaningFee = amount * 0.055;
-  const platformFee = amount * 0.25;
+  const cleaningFee = 5.5;
+  const platformFee = amount * 0.15;
   const hostAmount = amount - platformFee;
   const totalAmount = amount + platformFee + cleaningFee + youngDriverFee;
 
@@ -61,10 +61,10 @@ const createCheckout = async (userData, payload) => {
             name: "Trip Cost",
             description: `
             Fees Breakdown • 
-            Amount: ${amount} • 
-            Platform Fee: ${platformFee} • 
-            cleaning Fee: ${cleaningFee} • 
-            Young Driver Fee: ${youngDriverFee} 
+            Amount: £${amount} • 
+            Platform Fee: £${platformFee} • 
+            cleaning Fee: £${cleaningFee} • 
+            Young Driver Fee: £${youngDriverFee} 
             `,
           },
           unit_amount: Math.round(totalAmount * 100),
