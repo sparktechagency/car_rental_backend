@@ -21,7 +21,16 @@ const startChat = async (payload) => {
     messages: [],
   });
 
-  postNotification("New message", "You received new message", receiverId);
+  postNotification(
+    "New message",
+    "You have started a new conversation",
+    receiverId
+  );
+  postNotification(
+    "New message",
+    "You have started a new conversation",
+    userId
+  );
 
   return newChat;
 };
