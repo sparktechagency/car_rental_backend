@@ -3,6 +3,7 @@ const { ENUM_SOCKET_EVENT } = require("../util/enum");
 const { ChatSocket } = require("./chat.socket");
 const emitError = require("./emitError.socket");
 const User = require("../app/module/user/user.model");
+const postNotification = require("../util/postNotification");
 
 const validateUser = async (socket, userId) => {
   if (!userId) {
