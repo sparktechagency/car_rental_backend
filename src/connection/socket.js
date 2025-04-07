@@ -13,6 +13,7 @@ io = new Server(server, {
       "http://localhost:3000",
       "http://localhost:3001",
       "http://178.128.174.197:8003",
+      "http://172.19.0.1:8003",
       "https://nardo.app",
     ],
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
