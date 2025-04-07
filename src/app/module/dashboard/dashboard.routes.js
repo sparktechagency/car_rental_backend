@@ -59,6 +59,11 @@ router
     "/block-unblock-user",
     auth(config.auth_level.admin),
     DashboardController.blockUnblockUser
+  )
+  .delete(
+    "/delete-user",
+    auth(config.auth_level.admin),
+    DashboardController.deleteUser
   );
 
 module.exports = router;
