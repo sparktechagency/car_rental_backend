@@ -12,7 +12,7 @@ const formattedDate = currentDate.toLocaleDateString("en-US", {
 const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
     host: config.smtp.smtp_host,
-    // service: config.smtp.smtp_service,
+    service: config.smtp.smtp_service,
     port: parseInt(config.smtp.smtp_port),
     auth: {
       user: config.smtp.smtp_mail,
