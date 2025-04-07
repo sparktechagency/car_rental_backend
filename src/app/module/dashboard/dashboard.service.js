@@ -458,6 +458,19 @@ const blockUnblockUser = async (payload) => {
   return user;
 };
 
+const deleteUser = async (payload) => {
+  validateFields(payload, ["userId", "authId"]);
+
+  const [user, auth] = await Promise.all([
+    User.deleteOne({ _id: payload.userId }),
+    Auth.deleteOne({ _id: payload.authId }),
+  ]);
+
+  if (!user || !auth) throw new ApiError(status.NOT_FOUND, "User not found");
+
+  return { user, auth };
+};
+
 const DashboardService = {
   addDestination,
   getAllDestination,
@@ -470,6 +483,7 @@ const DashboardService = {
   getAllUser,
   getSingleUser,
   blockUnblockUser,
+  deleteUser,
 };
 
 module.exports = DashboardService;

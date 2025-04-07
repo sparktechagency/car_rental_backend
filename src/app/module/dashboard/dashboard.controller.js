@@ -117,6 +117,16 @@ const blockUnblockUser = catchAsync(async (req, res) => {
   });
 });
 
+const deleteUser = catchAsync(async (req, res) => {
+  const result = await DashboardService.deleteUser(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "User deleted successfully",
+    data: result,
+  });
+});
+
 const DashboardController = {
   addDestination,
   getAllDestination,
@@ -129,6 +139,7 @@ const DashboardController = {
   getAllUser,
   getSingleUser,
   blockUnblockUser,
+  deleteUser,
 };
 
 module.exports = DashboardController;
