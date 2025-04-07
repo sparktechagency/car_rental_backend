@@ -15,6 +15,7 @@ const corsOptions = {
     "http://178.128.174.197:8003",
     "http://178.128.174.197:4173",
     "http://178.128.174.197:4174",
+    "http://172.19.0.1:8003",
     "https://nardo.app",
     "https://admin.nardo.app",
   ],
