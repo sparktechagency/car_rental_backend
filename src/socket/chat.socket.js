@@ -53,6 +53,10 @@ const sendMessage = async (payload) => {
     message,
   });
 
+  // notify both user and host upon new message
+  postNotification("New message", message, receiverId);
+  postNotification("New message", message, userId);
+
   Promise.all([
     Chat.updateOne({ _id: chatId }, { $push: { messages: newMessage._id } }),
   ]);
