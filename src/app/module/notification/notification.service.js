@@ -5,8 +5,6 @@ const AdminNotification = require("../adminNotification/adminNotification.model"
 const Notification = require("./notification");
 
 const getAllNotifications = async (user, query) => {
-  console.log(user);
-
   if (user.role === ENUM_USER_ROLE.ADMIN) {
     const notificationQuery = new QueryBuilder(
       AdminNotification.find({}),
@@ -14,7 +12,7 @@ const getAllNotifications = async (user, query) => {
     )
       .search([""])
       .filter()
-      .sort("-createdAt")
+      .sort()
       .paginate()
       .fields();
 
