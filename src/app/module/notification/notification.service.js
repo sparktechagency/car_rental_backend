@@ -14,7 +14,7 @@ const getAllNotifications = async (user, query) => {
     )
       .search([""])
       .filter()
-      .sort()
+      .sort("-createdAt")
       .paginate()
       .fields();
 
