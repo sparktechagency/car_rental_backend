@@ -86,7 +86,7 @@ const updateCarLicense = async (userData, payload) => {
       carId,
       { licensePlateNum },
       userId,
-      "You have updated the license plate number of your car"
+      "You have updated the licence plate number of your car"
     );
 
     return updatedCar;
