@@ -42,11 +42,16 @@ const createCheckout = async (userData, payload) => {
   if (!car) throw new ApiError(status.NOT_FOUND, "Car not found");
   if (!trip) throw new ApiError(status.NOT_FOUND, "Trip not found");
 
+  // fare breakdown
   const youngDriverFee = trip.user.age < 25 ? 20 : 0;
   const cleaningFee = 5.5;
-  const platformFee = amount * 0.15;
-  const hostAmount = amount - platformFee;
-  const totalAmount = amount + platformFee + cleaningFee + youngDriverFee;
+  const platformFee = amount * 0.3; // 30% platform fee
+  const halfOfPlatformFee = platformFee / 2; // 15%
+  const hostAmount = amount - halfOfPlatformFee; // 15% charge to host
+  const totalAmount = amount + halfOfPlatformFee + cleaningFee + youngDriverFee; // amount + 15% + cleaning fee + young driver fee
+  // const platformFee = amount * 0.15;
+  // const hostAmount = amount - platformFee;
+  // const totalAmount = amount + platformFee + cleaningFee + youngDriverFee;
 
   const sessionData = {
     payment_method_types: ["card"],
