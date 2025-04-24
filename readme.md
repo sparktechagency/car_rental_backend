@@ -14,16 +14,18 @@
 6. check your junk mail popup
 7. nardo logo on first host
 
-<!-- ----------------- -->
+100 gbp total amount
 
-You know about carquery api right? they manage car year make model.
+15 gbp user
 
-I want to design a same system for only year, make, model, model variant with my node-express-mongoose backend.
+15 gbp host
 
-I want the functionality to be just like that of car query.
+user will pay 115 gpb
 
-I will get the year and view all the makes of that year
-I will get the make and year and get all the model pointing to the make and year
-I will get make, year and, model and all the model-variant of that year, make and model.
+plus the cleaning fee 5.5 gbp
 
-Give me step by step guideline
+plus young driver fee 20 gbp (if applicable)
+
+when transferring the balance to the host
+
+85 gpb
