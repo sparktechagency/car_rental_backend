@@ -106,7 +106,7 @@ const bookingTemp = (data) =>
                 </tr>
                 <tr>
                   <th>Total Price</th>
-                  <td>${data.price}</td>
+                  <td>£${data.price}</td>
                 </tr>
                 <tr>
                   <th>Status</th>
@@ -114,7 +114,7 @@ const bookingTemp = (data) =>
                 </tr>
               </table>
 
-              <p>We look forward to serving you. If you have any questions, feel free to contact us at <a href="mailto:nardolimited@gmail.com">nardolimited@gmail.com</a>.</p>
+              <p>We hope you enjoy your ride. If you have any questions, feel free to contact us at <a href="mailto:nardolimited@gmail.com">nardolimited@gmail.com</a>.</p>
               <p>Best regards,<br>The Nardo Team</p>
             </div>
             <div class="footer">
