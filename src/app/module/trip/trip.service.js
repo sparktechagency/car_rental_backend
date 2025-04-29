@@ -103,7 +103,10 @@ const addTrip = async (userData, payload) => {
 
 const getMyTripOrder = async (userData, query) => {
   const { userId } = userData;
-  const { status: tripStatus = ENUM_TRIP_STATUS.REQUESTED } = query || {};
+  const {
+    status: tripStatus = ENUM_TRIP_STATUS.REQUESTED,
+    isHostMyTripsRoute = false,
+  } = query || {};
 
   if (userData.role === ENUM_USER_ROLE.USER) {
     const trips = await Trip.find({ user: userId, status: tripStatus })
@@ -121,8 +124,16 @@ const getMyTripOrder = async (userData, query) => {
     };
   }
 
+  // checking if the api is called from host my trips route
+  // if yes, then we need to filter the trips by host id
+  // if no, then we need to filter the trips by user id
   if (userData.role === ENUM_USER_ROLE.HOST) {
-    const trips = await Trip.find({ host: userId, status: tripStatus })
+    const queryObj = {
+      ...(isHostMyTripsRoute ? { user: userId } : { host: userId }),
+      status: tripStatus,
+    };
+
+    const trips = await Trip.find(queryObj)
       .populate([
         { path: "car" },
         { path: "user" },
