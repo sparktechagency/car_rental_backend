@@ -66,7 +66,7 @@ const createCheckout = async (userData, payload) => {
             name: "Trip Cost",
             description: `
             Fees Breakdown • 
-            Amount: £${amount} • 
+            Car Fee: £${amount} • 
             Platform Fee: £${halfOfPlatformFee} • 
             cleaning Fee: £${cleaningFee} • 
             Young Driver Fee: £${youngDriverFee} 
