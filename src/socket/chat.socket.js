@@ -4,6 +4,8 @@ const ApiError = require("../error/ApiError");
 const Message = require("../app/module/chat/message.model");
 const Chat = require("../app/module/chat/chat.model");
 const postNotification = require("../util/postNotification");
+const User = require("../app/module/user/user.model");
+const { ENUM_USER_ROLE } = require("../util/enum");
 
 const startChat = async (payload) => {
   const { userId, receiverId } = payload;
@@ -45,6 +47,8 @@ const sendMessage = async (payload) => {
     participants: { $all: [userId, receiverId] },
   });
 
+  const user = await User.findById(userId);
+
   if (!existingChat) throw new ApiError(status.BAD_REQUEST, "No chat found");
 
   const newMessage = await Message.create({
@@ -54,8 +58,24 @@ const sendMessage = async (payload) => {
   });
 
   // notify both user and host upon new message
-  postNotification("New message", message, receiverId);
-  postNotification("New message", message, userId);
+  postNotification(
+    `New message. Go to ${
+      user.role === ENUM_USER_ROLE.USER
+        ? "Trips > Current"
+        : "Host History > Ongoing"
+    }`,
+    message,
+    receiverId
+  );
+  postNotification(
+    `New message. Go to ${
+      user.role === ENUM_USER_ROLE.USER
+        ? "Trips > Current"
+        : "Host History > Ongoing"
+    }`,
+    message,
+    userId
+  );
 
   Promise.all([
     Chat.updateOne({ _id: chatId }, { $push: { messages: newMessage._id } }),
