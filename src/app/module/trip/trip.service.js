@@ -175,8 +175,6 @@ const getAllTrip = async (query) => {
     tripsQuery.countTotal(),
   ]);
 
-  if (!trips.length) throw new ApiError(status.NOT_FOUND, "Trips not found");
-
   return {
     meta,
     trips,
@@ -255,8 +253,8 @@ const updateTripStatus = async (payload) => {
   return updatedTrip;
 };
 
-// delete unpaid trips
-cron.schedule("*/4 * * * *", async () => {
+// delete unpaid trips every hour
+cron.schedule("0 */1 * * *", async () => {
   try {
     const result = await Trip.deleteMany({ isPaid: false });
 
