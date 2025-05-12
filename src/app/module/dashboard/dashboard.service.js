@@ -202,7 +202,7 @@ const totalOverview = async () => {
       ]),
     ]);
 
-  const totalEarning = totalEarningAgg[0].totalEarning
+  const totalEarning = totalEarningAgg[0]?.totalEarning
     ? totalEarningAgg[0].totalEarning
     : 0;
 
