@@ -16,6 +16,12 @@ router
     "/mark-as-read",
     auth(config.auth_level.user),
     NotificationController.markAsRead
+  )
+
+  .delete(
+    "/delete-notification",
+    auth(config.auth_level.user),
+    NotificationController.deleteNotification
   );
 
 module.exports = router;

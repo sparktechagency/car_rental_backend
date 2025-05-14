@@ -49,9 +49,21 @@ const markAsRead = async (user, payload) => {
   return notification;
 };
 
+const deleteNotification = async (user, payload) => {
+  validateFields(payload, ["notificationId"]);
+
+  const notification = await Notification.findOneAndDelete({
+    toId: user.userId,
+    _id: payload.notificationId,
+  });
+
+  return notification;
+};
+
 const NotificationService = {
   getAllNotifications,
   markAsRead,
+  deleteNotification,
 };
 
 module.exports = NotificationService;

@@ -25,9 +25,23 @@ const markAsRead = catchAsync(async (req, res) => {
   });
 });
 
+const deleteNotification = catchAsync(async (req, res) => {
+  const result = await NotificationService.deleteNotification(
+    req.user,
+    req.body
+  );
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Notifications deleted",
+    data: result,
+  });
+});
+
 const NotificationController = {
   getAllNotifications,
   markAsRead,
+  deleteNotification,
 };
 
 module.exports = NotificationController;
