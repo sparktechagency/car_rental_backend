@@ -186,16 +186,19 @@ const totalOverview = async () => {
       Payment.aggregate([
         {
           $match: {
-            status: ENUM_PAYMENT_STATUS.SUCCEEDED,
+            status: {
+              $in: [
+                ENUM_PAYMENT_STATUS.SUCCEEDED,
+                ENUM_PAYMENT_STATUS.TRANSFERRED,
+              ],
+            },
           },
         },
         {
           $group: {
             _id: null,
             totalEarning: {
-              $sum: {
-                $subtract: ["$amount", "$refund_amount"],
-              },
+              $sum: "$amount",
             },
           },
         },
