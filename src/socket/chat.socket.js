@@ -59,20 +59,12 @@ const sendMessage = async (payload) => {
 
   // notify both user and host upon new message
   postNotification(
-    `New message. Go to ${
-      user.role === ENUM_USER_ROLE.USER
-        ? "Trips > Current"
-        : "Host History > Ongoing"
-    }`,
+    `New message. For Renters go to Trips > Current. For Hosts go to Host History > Ongoing`,
     message,
     receiverId
   );
   postNotification(
-    `New message. Go to ${
-      user.role === ENUM_USER_ROLE.USER
-        ? "Trips > Current"
-        : "Host History > Ongoing"
-    }`,
+    `New message. For Renters go to Trips > Current. For Hosts go to Host History > Ongoing`,
     message,
     userId
   );
