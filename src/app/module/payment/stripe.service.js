@@ -111,8 +111,8 @@ const webhookManager = async (request) => {
     event = stripe.webhooks.constructEvent(
       request.body,
       sig,
-      // cliEndPointSecret
-      endPointSecret
+      cliEndPointSecret
+      // endPointSecret
     );
   } catch (err) {
     response.status(400).send(`Webhook Error: ${err.message}`);
@@ -150,8 +150,8 @@ const refundPayment = async (payload) => {
 const updateHostPaymentDetails = async (req) => {
   const { user: userData, body: payload } = req;
   const { userId, email } = userData;
-  // const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress; // for local
-  const clientIp = req.headers["x-real-ip"]; // for production
+  const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress; // for local
+  // const clientIp = req.headers["x-real-ip"]; // for production
   const {
     // website_url: url,
     first_name,
@@ -183,8 +183,8 @@ const updateHostPaymentDetails = async (req) => {
 
   const payoutInfo = await PayoutInfo.findOne({ host: userId });
 
-  if (payoutInfo)
-    return { message: "Payout info already exists", data: payoutInfo };
+  // if (payoutInfo)
+  //   return { message: "Payout info already exists", data: payoutInfo };
 
   const stripeAccountData = {
     type: "custom",
